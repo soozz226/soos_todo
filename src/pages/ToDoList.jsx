@@ -4,84 +4,22 @@ import { fetchAllChckItems, updateChckItem } from "../api/todoApi";
 import Header from "../components/Header";
 import QuickNav from "../components/QuickNav";
 import WinCheckModal from "../components/WinCheckModal";
-import YearMonthPickerModal from "../components/YearMonthPickerModal";
-import { fmtDate as fmt, fmtDisplay, buildWeeks } from "../utils/dateUtils";
-import { WEEK_LABELS, entryBadgeClassName, entryBadgeText } from "../constants/entryTypes";
+import CalendarPicker from "../components/CalendarPicker";
+import { fmtDate as fmt, fmtDisplay } from "../utils/dateUtils";
+import { entryBadgeClassName, entryBadgeText } from "../constants/entryTypes";
 
 function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
-  const [viewYear, setViewYear] = useState(selectedDate.getFullYear());
-  const [viewMonth, setViewMonth] = useState(selectedDate.getMonth());
-  const [ymOpen, setYmOpen] = useState(false);
-
-  const todayStr = fmt(new Date());
-  const selectedStr = fmt(selectedDate);
-  const weeks = buildWeeks(viewYear, viewMonth);
-
-  const prevMonth = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear((y) => y - 1); }
-    else setViewMonth((m) => m - 1);
-  };
-  const nextMonth = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear((y) => y + 1); }
-    else setViewMonth((m) => m + 1);
-  };
-
   return (
-    <>
-      <div className="acct-cal-overlay" onClick={onClose} style={{ zIndex: 200 }}>
-        <div className="acct-cal-sheet" onClick={(e) => e.stopPropagation()}>
-          <div className="acct-cal-head">
-            <div className="acct-cal-nav" onClick={prevMonth}>‹</div>
-            <div className="acct-cal-title" onClick={() => setYmOpen(true)}>{viewYear}년 {viewMonth + 1}월</div>
-            <div className="acct-cal-nav" onClick={nextMonth}>›</div>
-          </div>
-
-          <div className="acct-cal-week">
-            {WEEK_LABELS.map((d, i) => (
-              <div key={d} className={`acct-cal-wd ${i === 0 ? "sun" : i === 6 ? "sat" : ""}`}>{d}</div>
-            ))}
-          </div>
-
-          {weeks.map((week, wi) => (
-            <div key={wi} className="acct-cal-row">
-              {week.map((day, di) => {
-                const ds = fmt(day);
-                const itemInfo = dateItemMap[ds];
-                const cls = [
-                  "acct-cal-day",
-                  day.getMonth() !== viewMonth ? "out" : "",
-                  di === 0 ? "sun" : di === 6 ? "sat" : "",
-                  ds === todayStr ? "today" : "",
-                  ds === selectedStr ? "selected" : "",
-                ].join(" ");
-                return (
-                  <div key={di} className={cls} onClick={() => { onSelect(day); onClose(); }}>
-                    <span>{day.getDate()}</span>
-                    {itemInfo && <div className={`acct-cal-dot${itemInfo.done === itemInfo.total ? " done" : ""}`} />}
-                  </div>
-                );
-              })}
-            </div>
-          ))}
-
-          <div className="acct-cal-foot">
-            <div className="acct-cal-today-btn" onClick={() => { onSelect(new Date()); onClose(); }}>오늘로 이동</div>
-            <div className="acct-cal-close-btn" onClick={onClose}>닫기</div>
-          </div>
-        </div>
+    <div className="acct-cal-overlay" onClick={onClose} style={{ zIndex: 200 }}>
+      <div className="acct-cal-sheet" onClick={(e) => e.stopPropagation()}>
+        <CalendarPicker
+          initialDate={selectedDate}
+          selected={fmt(selectedDate)}
+          dotMap={dateItemMap}
+          onSelect={(day) => { onSelect(day); onClose(); }}
+        />
       </div>
-
-      {ymOpen && (
-        <div style={{ position: "relative", zIndex: 300 }}>
-          <YearMonthPickerModal
-            initialYear={viewYear}
-            initialMonth={viewMonth}
-            onClose={() => setYmOpen(false)}
-            onConfirm={(y, m) => { setViewYear(y); setViewMonth(m); }}
-          />
-        </div>
-      )}
-    </>
+    </div>
   );
 }
 

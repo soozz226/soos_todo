@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { fmtDate, buildWeeks } from "../utils/dateUtils";
-import YearMonthPickerModal from "../components/YearMonthPickerModal";
+import { fmtDate, parseDate } from "../utils/dateUtils";
+import CalendarPicker from "../components/CalendarPicker";
 import { insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCodes } from "../api/acctApi";
 import AcctPhraseSettings from "./AcctPhraseSettings"; // 설정 화면의 문구 탭과 같은 컴포넌트
 
@@ -79,27 +79,12 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
     setTypeCode(null);
   };
   const [calOpen, setCalOpen] = useState(false);
-  const [ymOpen, setYmOpen] = useState(false);
   const [phraseOpen, setPhraseOpen] = useState(false); // 자주 쓰는 문구 시트
   const [phraseManageOpen, setPhraseManageOpen] = useState(false); // 문구 추가/삭제 페이지
-  const [viewYear, setViewYear] = useState(() => Number(entryDate.slice(0, 4)));
-  const [viewMonth, setViewMonth] = useState(() => Number(entryDate.slice(5, 7)) - 1);
 
-  const openCal = () => {
-    setViewYear(Number(entryDate.slice(0, 4)));
-    setViewMonth(Number(entryDate.slice(5, 7)) - 1);
-    setCalOpen(true);
-  };
-  const prevMonth = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear((y) => y - 1); } else setViewMonth((m) => m - 1);
-  };
-  const nextMonth = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear((y) => y + 1); } else setViewMonth((m) => m + 1);
-  };
+  const openCal = () => setCalOpen(true);
+
   const pickDate = (dateStr) => { setEntryDate(dateStr); setCalOpen(false); };
-
-  const todayStr = fmtDate(new Date());
-  const weeks = calOpen ? buildWeeks(viewYear, viewMonth) : [];
 
   const isIn = iofl === "A001";
   const hasType = visibleTypes.some((t) => t[TYPE_CODE_KEY] === typeCode); // 상세 항목 선택 필수
@@ -355,58 +340,16 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
         </div>
       )}
 
-      {calOpen && (
+            {calOpen && (
         <div className="acct-cal-overlay" onClick={() => setCalOpen(false)}>
           <div className="acct-cal-sheet" onClick={(e) => e.stopPropagation()}>
-            <div className="acct-cal-head">
-              <div className="acct-cal-nav" onClick={prevMonth}>‹</div>
-              <div className="acct-cal-title" onClick={() => setYmOpen(true)}>
-                {viewYear}년 {viewMonth + 1}월
-              </div>
-              <div className="acct-cal-nav" onClick={nextMonth}>›</div>
-            </div>
-
-            <div className="acct-cal-week">
-              {WEEK.map((d, i) => (
-                <div key={d} className={`acct-cal-wd ${i === 0 ? "sun" : i === 6 ? "sat" : ""}`}>{d}</div>
-              ))}
-            </div>
-
-            {weeks.map((week, wi) => (
-              <div key={wi} className="acct-cal-row">
-                {week.map((day, di) => {
-                  const ds = fmtDate(day);
-                  const cls = [
-                    "acct-cal-day",
-                    day.getMonth() !== viewMonth ? "out" : "",
-                    di === 0 ? "sun" : di === 6 ? "sat" : "",
-                    ds === todayStr ? "today" : "",
-                    ds === entryDate ? "selected" : "",
-                  ].join(" ");
-                  return (
-                    <div key={di} className={cls} onClick={() => pickDate(ds)}>
-                      <span>{day.getDate()}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            ))}
-
-            <div className="acct-cal-foot">
-              <div className="acct-cal-today-btn" onClick={() => pickDate(todayStr)}>오늘로 이동</div>
-              <div className="acct-cal-close-btn" onClick={() => setCalOpen(false)}>닫기</div>
-            </div>
+            <CalendarPicker
+              initialDate={parseDate(entryDate)}
+              selected={entryDate}
+              onSelect={(day) => pickDate(fmtDate(day))}
+            />
           </div>
         </div>
-      )}
-
-      {ymOpen && (
-        <YearMonthPickerModal
-          initialYear={viewYear}
-          initialMonth={viewMonth}
-          onClose={() => setYmOpen(false)}
-          onConfirm={(y, m) => { setViewYear(y); setViewMonth(m); }}
-        />
       )}
     </div>
   );
