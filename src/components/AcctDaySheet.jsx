@@ -47,14 +47,16 @@ function AcctDaySheet({ date, title, entries, onClose, onAdd, onEditEntry, resol
         style={{ maxHeight: "78vh", overflowY: "auto", padding: 0 }}
       >
         <div
+          onClick={onAdd}
           style={{
+            position: "sticky", top: 0, zIndex: 1, cursor: "pointer",
             display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
             padding: "18px 0",
             background: "#f0f2f7", borderRadius: "20px 20px 0 0",
           }}
         >
-          <span style={{ fontSize: 16, color: "#4a8ef5", fontWeight: 700 }}>@</span>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#1e2a3a" }}>상세 내역</span>
+          <span style={{ fontSize: 16, color: "#4a8ef5", fontWeight: 700 }}>＋</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: "#1e2a3a" }}>내역 추가</span>
         </div>
         
         <div style={{ padding: "20px 20px 32px" }}>
@@ -149,19 +151,6 @@ function AcctDaySheet({ date, title, entries, onClose, onAdd, onEditEntry, resol
           )}
         </div>
 
-        {/* 플로팅 + 버튼 (시트 안) */}
-        <div
-          onClick={onAdd}
-          style={{
-            position: "sticky", bottom: 16, marginLeft: "auto", marginRight: 20,
-            width: 52, height: 52, borderRadius: "50%",
-            background: "#4a8ef5", color: "#fff", fontSize: 24, display: "flex",
-            alignItems: "center", justifyContent: "center", cursor: "pointer",
-            boxShadow: "0 4px 12px rgba(74,142,245,0.4)",
-          }}
-        >
-          +
-        </div>
       </div>
     </div>
 

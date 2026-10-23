@@ -33,5 +33,10 @@ export function useNav(initialScreen) {
 
   const back = useCallback(() => history.back(), []);
 
-  return { screen: stack[stack.length - 1], push, back, guardRef };
+  // 현재 화면을 다른 화면으로 교체 (뒤로가기 기록은 쌓이지 않음)
+  const replace = useCallback((screen) => {
+    setStack((s) => [...s.slice(0, -1), screen]);
+  }, []);
+
+  return { screen: stack[stack.length - 1], push, replace, back, guardRef };
 }

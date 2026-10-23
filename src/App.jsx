@@ -16,7 +16,7 @@ import { CapacitorShareTarget } from '@capgo/capacitor-share-target'
 
 function App() {
   const { user } = useUser();
-  const { screen, push, back, guardRef } = useNav({ name: 'welcome' });
+  const { screen, push, replace, back, guardRef } = useNav({ name: 'welcome' });
 
   // 사진 공유 받기
   useEffect(() => {
@@ -40,16 +40,17 @@ function App() {
       )}
 
       {screen.name === 'cardlist' && (
-        <CardList onBack={back} onUser={user} onOpenCard={openCardDetail} />
+        <CardList onBack={back} onUser={user} onOpenCard={openCardDetail} onQuickNav={(name) => replace({ name })} />
       )}
 
       {screen.name === 'todolist' && (
         <ToDoList
-          onBack={back}
-          onUser={user}
-          onOpenCard={openCardDetail}
-          onNavigateOverdue={() => push({ name: 'overdue' })}
-        />
+        onBack={back}
+        onUser={user}
+        onOpenCard={openCardDetail}
+        onNavigateOverdue={() => push({ name: 'overdue' })}
+        onQuickNav={(name) => replace({ name })}
+      />
       )}
 
       {screen.name === 'carddetail' && (
@@ -74,6 +75,7 @@ function App() {
           onOpenEntry={(date = null, entry = null, book = null, typeCodes = [], zero = false) =>
             push({ name: 'acctbookdetail', date, entry, book, typeCodes, zero })}
           onOpenSettings={(book = null) => push({ name: 'acctsettings', book })}
+          onQuickNav={(name) => replace({ name })}
         />
       )}
 

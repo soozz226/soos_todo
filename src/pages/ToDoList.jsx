@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { fetchAllChckItems, updateChckItem } from "../api/todoApi";
 import Header from "../components/Header";
+import QuickNav from "../components/QuickNav";
 import WinCheckModal from "../components/WinCheckModal";
 import { fmtDate as fmt, fmtDisplay } from "../utils/dateUtils";
 import { MONTHS, WEEK_LABELS, entryBadgeClassName, entryBadgeText } from "../constants/entryTypes";
@@ -96,7 +97,7 @@ function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
 }
 
 /* ────────────────── Daily ToDo Screen ────────────────── */
-function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings }) {
+function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings, onQuickNav }) {
   const { data: cards, loading, reload: sync, } = useFetch(fetchAllChckItems);
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -308,6 +309,7 @@ function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings })
       </div>
       </>
       )}
+      <QuickNav current="todolist" onNavigate={onQuickNav} bottom={72} />
     </div>
   );
 }

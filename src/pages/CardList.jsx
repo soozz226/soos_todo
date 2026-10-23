@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { fetchToDoCards, fetchToDoStatusCodes, fetchToDoTagCodes, fetchToDoSubCodes } from "../api/todoApi";
-
+import QuickNav from "../components/QuickNav";
+import FloatingAddButton from "../components/FloatingAddButton";
 import Ico from "../etc/icons";
 import Header from "../components/Header";
 
@@ -51,7 +52,8 @@ function FilterPill({ label, active, activeColor, onClick }) {
     );
 }
 
-function CardList({ onBack, onUser, onOpenCard }) {
+function CardList({ onBack, onUser, onOpenCard, onQuickNav }) {
+    
     // 카드
     const { data: cards, loading: isSyncing, reload: sync } = useFetch(fetchToDoCards);
 
@@ -115,9 +117,7 @@ function CardList({ onBack, onUser, onOpenCard }) {
 
 return (
     <div className="board-screen">
-        <Header title="Card List" user={onUser} onBack={onBack} isSyncing={isSyncing} onSync={sync}>
-            <div className="hdr-btn" onClick={() => onOpenCard()}>＋</div>
-        </Header>
+        <Header title="Card List" user={onUser} onBack={onBack} isSyncing={isSyncing} onSync={sync} />
 
         <div className="status-tabs">
         {status.map(s => (
@@ -133,8 +133,8 @@ return (
             </div>
         ))}
         </div>
-
-        <div className="column">
+    
+            <div className="column" style={{ paddingBottom: 96 }}>
             <div className="col-hdr">
                 <span className="col-ico" style={{ color: activeStatusInfo?.code_bgcl }}>
                 {IconComponent && <IconComponent />}
@@ -265,6 +265,11 @@ return (
             </div>
             ))}
         </div>
+
+        <QuickNav current="cardlist" onNavigate={onQuickNav} />
+
+        {/* 플로팅 + 버튼 */}
+        <FloatingAddButton onClick={() => onOpenCard()} />
     </div>
 );
 }

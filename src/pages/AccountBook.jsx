@@ -6,6 +6,8 @@ import { fetchAcctEntries, fetchAcctEntriesRange, fetchAcctBookCodes, fetchAcctC
 import { fmtDate } from "../utils/dateUtils";
 import YearMonthPickerModal from "../components/YearMonthPickerModal";
 import AcctDaySheet from "../components/AcctDaySheet";
+import QuickNav from "../components/QuickNav";
+import FloatingAddButton from "../components/FloatingAddButton";
 import AcctCarrySheet from "../components/AcctCarrySheet";
 
 const TYPE_FLAG = { A001: "B", A002: "C" }; // 수입: B, 지출: C
@@ -35,7 +37,7 @@ const TABS = [
 const WEEK_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_NUM = (m) => `${m + 1}월`;
 
-function AccountBook({ onBack, onOpenEntry, onOpenSettings }) {
+function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
   const [calYear, setCalYear] = useState(() => loadYM().y);      // ← 교체
   const [calMonth, setCalMonth] = useState(() => loadYM().m);    // ← 교체
   const [activeTab, setActiveTab] = useState("calendar");
@@ -442,18 +444,10 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings }) {
         </div>
       )}
 
+      <QuickNav current="acctbook" onNavigate={onQuickNav} />
+
       {/* 플로팅 + 버튼 */}
-      <div
-        onClick={() => openEntry(selectedDate)}
-        style={{
-          position: "fixed", right: 24, bottom: 24, width: 56, height: 56, borderRadius: "50%",
-          background: "#4a8ef5", color: "#fff", fontSize: 26, display: "flex",
-          alignItems: "center", justifyContent: "center", cursor: "pointer",
-          boxShadow: "0 4px 12px rgba(74,142,245,0.4)", maxWidth: 480, margin: "0 auto",
-        }}
-      >
-        +
-      </div>
+      <FloatingAddButton onClick={() => openEntry(selectedDate)} />
 
       {isYearMonthOpen && (
         <YearMonthPickerModal
