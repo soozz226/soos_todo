@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fmtDate } from "../utils/dateUtils";
+import { fmtDate, buildWeeks } from "../utils/dateUtils";
 import YearMonthPickerModal from "../components/YearMonthPickerModal";
 import { insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCodes } from "../api/acctApi";
 import AcctPhraseSettings from "./AcctPhraseSettings"; // 설정 화면의 문구 탭과 같은 컴포넌트
@@ -28,21 +28,6 @@ function formatDateLabel(str) {
   return `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")} (${dow})`;
 }
 
-function buildWeeks(year, month) {
-  const gridStart = new Date(year, month, 1 - new Date(year, month, 1).getDay());
-  const cursor = new Date(gridStart);
-  const weeks = [];
-  for (let w = 0; w < 6; w++) {
-    const week = [];
-    for (let d = 0; d < 7; d++) {
-      week.push(new Date(cursor));
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    weeks.push(week);
-  }
-  return weeks;
-}
-
 function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, initialMemo, linkTodo, onBack, onOpenTypeSettings }) {
   const isEdit = !!entry;
   const [iofl, setIofl] = useState(entry?.acct_iofl || "A001");
@@ -50,6 +35,9 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
   const [amount, setAmount] = useState(entry ? String(entry.acct_amnt) : "");   
   const [memo, setMemo] = useState(entry?.acct_memo || (initialMemo || "").slice(0, 50));
   const [saving, setSaving] = useState(false);
+    // 금액 가감 계산 (수정 화면에서만 사용)
+  const [adjOp, setAdjOp] = useState("add"); // add: 더하기, sub: 빼기
+  const [adjText, setAdjText] = useState("");
   const [isZero, setIsZero] = useState(entry ? !!entry.acct_zero : !!zero); // 보관금(0일 내역) 체크
   const [typeCode, setTypeCode] = useState(entry?.acct_type || null);
   // AccountBook 에서 받은 항목 코드를 그대로 사용. (아직 못 받아 왔을 때만 직접 불러옴)
@@ -118,6 +106,18 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
   const hasAmount = amount !== ""; // "0"을 직접 입력한 경우도 허용
   const canSave = hasAmount && hasType && !saving;
   const amountText = amount ? Number(amount).toLocaleString() : "";
+
+  const adjValue = Number(adjText || 0);
+  const adjBase = Number(amount || 0);
+  const adjResult = adjOp === "add" ? adjBase + adjValue : adjBase - adjValue;
+  const adjNegative = adjResult < 0;
+  const canApplyAdj = adjText !== "" && !adjNegative && String(adjResult).length <= 12;
+
+  const applyAdj = () => {
+    if (!canApplyAdj) return;
+    setAmount(String(adjResult));
+    setAdjText("");
+  };
 
   const handleSave = async () => {
     if (!canSave) return;
@@ -200,6 +200,35 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
           <span className="acct-d-won">원</span>
         </div>
 
+        {/* 금액 가감 계산 (수정할 때만) */}
+        {isEdit && (
+          <div className="acct-d-adj">
+            <div className="acct-d-adj-pill">
+              <div className="acct-d-adj-op">
+                <div className={`acct-d-adj-opbtn ${adjOp === "add" ? "active" : ""}`} onClick={() => setAdjOp("add")}>＋</div>
+                <div className={`acct-d-adj-opbtn ${adjOp === "sub" ? "active" : ""}`} onClick={() => setAdjOp("sub")}>−</div>
+              </div>
+              <input
+                className="acct-d-adj-input"
+                type="text"
+                inputMode="numeric"
+                placeholder="가감할 금액"
+                value={adjText ? Number(adjText).toLocaleString() : ""}
+                onChange={(e) => setAdjText(e.target.value.replace(/\D/g, "").slice(0, 12))}
+              />
+              <button type="button" className="acct-d-adj-apply" disabled={!canApplyAdj} onClick={applyAdj}>
+                적용
+              </button>
+            </div>
+            <div className={`acct-d-adj-preview ${adjNegative ? "neg" : ""}`}>
+              {adjText === ""
+                ? `기존 ${adjBase.toLocaleString()}원`
+                : adjNegative
+                  ? "결과가 0원보다 작아서 적용할 수 없어요"
+                  : `${adjBase.toLocaleString()} ${adjOp === "add" ? "+" : "−"} ${adjValue.toLocaleString()} = ${adjResult.toLocaleString()}원`}
+            </div>
+          </div>
+        )}
 
         {/* 날짜 / 내용 */}
         <div className="acct-d-card">
@@ -364,7 +393,7 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
             ))}
 
             <div className="acct-cal-foot">
-              <div className="acct-cal-today-btn" onClick={() => pickDate(todayStr)}>오늘</div>
+              <div className="acct-cal-today-btn" onClick={() => pickDate(todayStr)}>오늘로 이동</div>
               <div className="acct-cal-close-btn" onClick={() => setCalOpen(false)}>닫기</div>
             </div>
           </div>

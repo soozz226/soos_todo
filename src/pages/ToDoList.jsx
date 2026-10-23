@@ -4,19 +4,18 @@ import { fetchAllChckItems, updateChckItem } from "../api/todoApi";
 import Header from "../components/Header";
 import QuickNav from "../components/QuickNav";
 import WinCheckModal from "../components/WinCheckModal";
-import { fmtDate as fmt, fmtDisplay } from "../utils/dateUtils";
-import { MONTHS, WEEK_LABELS, entryBadgeClassName, entryBadgeText } from "../constants/entryTypes";
+import YearMonthPickerModal from "../components/YearMonthPickerModal";
+import { fmtDate as fmt, fmtDisplay, buildWeeks } from "../utils/dateUtils";
+import { WEEK_LABELS, entryBadgeClassName, entryBadgeText } from "../constants/entryTypes";
 
-/* ────────────────── Custom Calendar ────────────────── */
 function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
   const [viewYear, setViewYear] = useState(selectedDate.getFullYear());
   const [viewMonth, setViewMonth] = useState(selectedDate.getMonth());
+  const [ymOpen, setYmOpen] = useState(false);
 
-  const today = new Date();
-  const todayStr = fmt(today);
-
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const todayStr = fmt(new Date());
+  const selectedStr = fmt(selectedDate);
+  const weeks = buildWeeks(viewYear, viewMonth);
 
   const prevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear((y) => y - 1); }
@@ -27,72 +26,62 @@ function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
     else setViewMonth((m) => m + 1);
   };
 
-  const cells = [];
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ zIndex: 200 }}>
-      <div className="modal-sheet" onClick={(e) => e.stopPropagation()} style={{ padding: "20px 16px 36px" }}>
-        <div style={{ margin: "0 auto 20px" }} />
+    <>
+      <div className="acct-cal-overlay" onClick={onClose} style={{ zIndex: 200 }}>
+        <div className="acct-cal-sheet" onClick={(e) => e.stopPropagation()}>
+          <div className="acct-cal-head">
+            <div className="acct-cal-nav" onClick={prevMonth}>‹</div>
+            <div className="acct-cal-title" onClick={() => setYmOpen(true)}>{viewYear}년 {viewMonth + 1}월</div>
+            <div className="acct-cal-nav" onClick={nextMonth}>›</div>
+          </div>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18, padding: "0 4px" }}>
-          <div onClick={prevMonth} style={{ width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 10, background: "#f0f2f7", fontSize: 18, color: "#1e2a3a" }}>‹</div>
-          <div style={{ fontSize: 17, fontWeight: 700, color: "#1e2a3a" }}>{viewYear}년 {MONTHS[viewMonth]}</div>
-          <div onClick={nextMonth} style={{ width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", borderRadius: 10, background: "#f0f2f7", fontSize: 18, color: "#1e2a3a" }}>›</div>
-        </div>
+          <div className="acct-cal-week">
+            {WEEK_LABELS.map((d, i) => (
+              <div key={d} className={`acct-cal-wd ${i === 0 ? "sun" : i === 6 ? "sat" : ""}`}>{d}</div>
+            ))}
+          </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", marginBottom: 8 }}>
-          {WEEK_LABELS.map((d, i) => (
-            <div key={d} style={{ textAlign: "center", fontSize: 12, fontWeight: 600, color: i === 0 ? "#ef4444" : i === 6 ? "#4a8ef5" : "#9ca3af", padding: "4px 0" }}>{d}</div>
+          {weeks.map((week, wi) => (
+            <div key={wi} className="acct-cal-row">
+              {week.map((day, di) => {
+                const ds = fmt(day);
+                const itemInfo = dateItemMap[ds];
+                const cls = [
+                  "acct-cal-day",
+                  day.getMonth() !== viewMonth ? "out" : "",
+                  di === 0 ? "sun" : di === 6 ? "sat" : "",
+                  ds === todayStr ? "today" : "",
+                  ds === selectedStr ? "selected" : "",
+                ].join(" ");
+                return (
+                  <div key={di} className={cls} onClick={() => { onSelect(day); onClose(); }}>
+                    <span>{day.getDate()}</span>
+                    {itemInfo && <div className={`acct-cal-dot${itemInfo.done === itemInfo.total ? " done" : ""}`} />}
+                  </div>
+                );
+              })}
+            </div>
           ))}
-        </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2px 0" }}>
-          {cells.map((day, idx) => {
-            if (!day) return <div key={`empty-${idx}`} />;
-            const dateObj = new Date(viewYear, viewMonth, day);
-            const dateStr = fmt(dateObj);
-            const isSelected = fmt(selectedDate) === dateStr;
-            const isToday = todayStr === dateStr;
-            const itemInfo = dateItemMap[dateStr];
-            const hasItem = !!itemInfo;
-            const allDone = hasItem && itemInfo.done === itemInfo.total;
-            const isWeekend = idx % 7 === 0 ? "sun" : idx % 7 === 6 ? "sat" : "";
-
-            return (
-              <div
-                key={day}
-                onClick={() => { onSelect(dateObj); onClose(); }}
-                style={{
-                  height: 42, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-                  cursor: "pointer", borderRadius: 10,
-                  background: isSelected ? "#4a8ef5" : isToday ? "#eef3ff" : "transparent",
-                  transition: "background 0.1s",
-                }}
-              >
-                <span style={{
-                  fontSize: 14, fontWeight: isSelected || isToday ? 700 : 400,
-                  color: isSelected ? "#fff" : isToday ? "#4a8ef5" : isWeekend === "sun" ? "#ef4444" : isWeekend === "sat" ? "#4a8ef5" : "#1e2a3a",
-                }}>
-                  {day}
-                </span>
-                {hasItem && (
-                  <div style={{ width: 4, height: 4, borderRadius: "50%", background: isSelected ? "#fff" : allDone ? "#22c55e" : "#ef4444", marginTop: 2 }} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        <div
-          onClick={() => { onSelect(new Date()); onClose(); }}
-          style={{ marginTop: 16, textAlign: "center", fontSize: 14, fontWeight: 600, color: "#4a8ef5", cursor: "pointer", padding: "10px 0" }}
-        >
-          오늘로 이동
+          <div className="acct-cal-foot">
+            <div className="acct-cal-today-btn" onClick={() => { onSelect(new Date()); onClose(); }}>오늘로 이동</div>
+            <div className="acct-cal-close-btn" onClick={onClose}>닫기</div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {ymOpen && (
+        <div style={{ position: "relative", zIndex: 300 }}>
+          <YearMonthPickerModal
+            initialYear={viewYear}
+            initialMonth={viewMonth}
+            onClose={() => setYmOpen(false)}
+            onConfirm={(y, m) => { setViewYear(y); setViewMonth(m); }}
+          />
+        </div>
+      )}
+    </>
   );
 }
 

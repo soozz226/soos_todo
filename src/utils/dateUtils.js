@@ -25,3 +25,18 @@ return `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`
 
 /** 오늘 날짜 문자열 */
 export const todayStr = () => fmtDate(new Date());
+
+/** 달력 6주 그리드 (이전/다음 달 날짜 포함). month 는 0부터 */
+export const buildWeeks = (year, month) => {
+    const cursor = new Date(year, month, 1 - new Date(year, month, 1).getDay());
+    const weeks = [];
+    for (let w = 0; w < 6; w++) {
+        const week = [];
+        for (let d = 0; d < 7; d++) {
+            week.push(new Date(cursor));
+            cursor.setDate(cursor.getDate() + 1);
+        }
+        weeks.push(week);
+    }
+    return weeks;
+};

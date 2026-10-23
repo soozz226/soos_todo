@@ -364,6 +364,19 @@ background: #fef2f2;
 .acct-d-amount-input::placeholder { color: #cbd0da; }
 .acct-d-won { font-size: 22px; font-weight: 600; color: #6b7280; }
 
+/* ── 상세 화면: 금액 가감 계산 (알약 한 줄) ── */
+.acct-d-adj { margin: -16px 0 20px; }
+.acct-d-adj-pill { display: flex; align-items: center; gap: 6px; width: fit-content; max-width: 100%; margin: 0 auto; height: 44px; padding: 0 5px; border-radius: 100px; border: 1px solid #d8dce5; background: transparent; }
+.acct-d-adj-op { display: flex; flex-shrink: 0; background: #e6e9f0; border-radius: 100px; padding: 2px; }
+.acct-d-adj-opbtn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 16px; font-weight: 700; color: #9ca3af; cursor: pointer; }
+.acct-d-adj-opbtn.active { background: #fff; color: #1e2a3a; box-shadow: 0 1px 3px rgba(30, 42, 58, .12); }
+.acct-d-adj-input { flex: 0 0 auto; width: 110px; min-width: 0; border: 0; outline: 0; background: transparent; padding: 0; text-align: center; font-size: 16px; font-weight: 600; color: #1e2a3a; }
+.acct-d-adj-input::placeholder { color: #c4c9d4; font-weight: 500; font-size: 14px; }
+.acct-d-adj-apply { flex-shrink: 0; height: 34px; padding: 0 16px; border: 0; border-radius: 100px; background: #4a8ef5; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+.acct-d-adj-apply:disabled { background: #d8dce5; cursor: default; }
+.acct-d-adj-preview { margin-top: 10px; text-align: center; font-size: 12px; font-weight: 600; color: #9ca3af; }
+.acct-d-adj-preview.neg { color: #d9463f; }
+
 /* ── 상세 화면: 날짜 / 내용 카드 ── */
 .acct-d-card { background: #fff; border-radius: 16px; padding: 0 16px; box-shadow: 0 1px 2px rgba(30, 42, 58, .05); }
 .acct-d-row { display: flex; align-items: center; gap: 16px; min-height: 56px; cursor: pointer; }
@@ -405,7 +418,7 @@ background: #fef2f2;
 
 /* ── 날짜 선택 달력 (바텀시트) ── */
 .acct-cal-overlay { position: fixed; inset: 0; z-index: 90; background: rgba(30, 42, 58, .4); display: flex; align-items: flex-end; justify-content: center; }
-.acct-cal-sheet { width: 100%; max-width: 480px; background: #fff; border-radius: 20px 20px 0 0; padding: 8px 8px calc(12px + env(safe-area-inset-bottom, 0px)); }
+.acct-cal-sheet { width: 100%; max-width: 480px; background: #fff; border-radius: 20px 20px 0 0; padding: 8px 8px calc(12px + env(safe-area-inset-bottom, 0px)); animation: slideUpSheet 0.25s ease-out; }
 .acct-cal-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 8px 8px; }
 .acct-cal-nav { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 26px; color: #6b7280; cursor: pointer; }
 .acct-cal-title { font-size: 17px; font-weight: 700; color: #1e2a3a; padding: 6px 12px; cursor: pointer; }
@@ -414,13 +427,17 @@ background: #fef2f2;
 .acct-cal-wd { text-align: center; font-size: 11px; font-weight: 600; padding: 6px 0; color: #4b5563; }
 .acct-cal-wd.sun { color: #ef4444; }
 .acct-cal-wd.sat { color: #4a8ef5; }
-.acct-cal-day { height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: #1e2a3a; }
+.acct-cal-day { position: relative; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; color: #1e2a3a; }
 .acct-cal-day span { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 .acct-cal-day.sun { color: #ef4444; }
 .acct-cal-day.sat { color: #4a8ef5; }
 .acct-cal-day.out { color: #d1d5db; }
 .acct-cal-day.today span { box-shadow: inset 0 0 0 1.5px #4a8ef5; font-weight: 700; }
 .acct-cal-day.selected span { background: #4a8ef5; color: #fff; font-weight: 700; box-shadow: none; }
+.acct-cal-dot { position: absolute; bottom: 3px; left: 50%; margin-left: -2px; width: 4px; height: 4px; border-radius: 50%; background: #ef4444; pointer-events: none; }
+.acct-cal-dot.done { background: #22c55e; }
+.acct-cal-day.selected .acct-cal-dot { background: #fff; }
+.acct-cal-day.out .acct-cal-dot { opacity: .4; }
 .acct-cal-foot { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 0; }
 .acct-cal-today-btn { font-size: 14px; font-weight: 600; color: #4a8ef5; padding: 8px; cursor: pointer; }
 .acct-cal-close-btn { font-size: 14px; font-weight: 600; color: #9ca3af; padding: 8px; cursor: pointer; }
