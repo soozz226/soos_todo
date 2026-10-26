@@ -1,5 +1,4 @@
 import { supabase } from "../lib/supabaseClient";
-import { fmtDate } from "../utils/dateUtils";
 
 /* ────────────────── 코드 테이블 조회 ──────────────────
   ⚠️ code_flag 값('STATUS','T','S' 등)은 실제 DB에 저장된 값과
@@ -99,7 +98,8 @@ export async function fetchToDoCardDetail(todoUuid) {
     .select(`
       *,
       todo_file(*),
-      todo_chck(*, todo_chck_item(*))
+      todo_chck(*, todo_chck_item(*)),
+      todo_alrm(*)
     `)
     .eq("todo_uuid", todoUuid)
     .single();
@@ -377,15 +377,43 @@ export async function updateChckItem(itemUuid, patch) {
   if (error) throw error;
 }
 
-/* ────────────────── 카드 알림 조회 (알림 설정한 카드만, 오늘 이후) ────────────────── */
+/* ────────────────── 카드 알림 (todo_alrm) ────────────────── */
 
-export async function fetchNotiCards() {
+export async function saveTodoAlarm(todoUuid, localAlarms = [], originalAlarms = []) {
+  const localIds = localAlarms.map((a) => a.alrm_uuid);
+  const deletedIds = originalAlarms
+    .map((a) => a.alrm_uuid)
+    .filter((id) => !localIds.includes(id));
+
+  if (deletedIds.length > 0) {
+    const { error } = await supabase.from("todo_alrm").delete().in("alrm_uuid", deletedIds);
+    if (error) throw error;
+  }
+
+  if (localAlarms.length > 0) {
+    const { error } = await supabase.from("todo_alrm").upsert(
+      localAlarms.map((a) => ({
+        alrm_uuid: a.alrm_uuid,
+        todo_uuid: todoUuid,
+        alrm_date: a.alrm_date,
+        alrm_time: a.alrm_time,
+        alrm_note: a.alrm_note || null,
+        alrm_rpt: a.alrm_rpt,
+        alrm_intv: a.alrm_intv || 1,
+        alrm_days: a.alrm_days?.length ? a.alrm_days : null,
+        alrm_end: a.alrm_end || null,
+      })),
+      { onConflict: "alrm_uuid" }
+    );
+    if (error) throw error;
+  }
+}
+
+// 알림 예약용: 모든 카드의 알림 + 카드 제목
+export async function fetchAllAlarms() {
   const { data, error } = await supabase
-    .from("soos_todo")
-    .select("todo_uuid, todo_name, noti_date, noti_time, noti_note")
-    .eq("todo_noti", true)
-    .gte("noti_date", fmtDate(new Date()));
-
+    .from("todo_alrm")
+    .select("alrm_uuid, todo_uuid, alrm_date, alrm_time, alrm_note, alrm_rpt, alrm_intv, alrm_days, alrm_end, soos_todo(todo_name)");
   if (error) throw error;
   return data;
 }

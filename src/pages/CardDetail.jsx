@@ -18,6 +18,7 @@ import {
     uploadTodoFile,
     deleteTodoFile ,
     copyTodoFile,
+    saveTodoAlarm,
     } from "../api/todoApi";
     import Ico from "../etc/icons";
     import AlarmPicker from "../components/AlarmPicker";
@@ -28,12 +29,9 @@ todo_name: "",
 todo_stat: "A001",
 todo_tags: "",
 todo_subs: "",
-todo_noti: false,
-noti_date: "",
-noti_time: "",
-noti_note: "",
 todo_file: [],
 todo_chck: [],
+todo_alrm: [],
 };
 
 const fmtFileSize = (bytes) => {
@@ -124,10 +122,8 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
             todo_name: card.todo_name || "",
             todo_tags: card.todo_tags || "",
             todo_subs: card.todo_subs || "",
-            noti_date: card.noti_date || "",
-            noti_time: card.noti_time || "",
-            noti_note: card.noti_note || "",
             todo_file: card.todo_file || [],
+            todo_alrm: card.todo_alrm || [],
         });
         setIsDirty(false);   // 추가
         }
@@ -422,10 +418,6 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                 todo_stat: localCard.todo_stat,
                 todo_tags: localCard.todo_tags || null,
                 todo_subs: localCard.todo_subs || null,
-                todo_noti: localCard.todo_noti,
-                noti_date: localCard.noti_date || null,
-                noti_time: localCard.noti_time || null,
-                noti_note: localCard.noti_note || null,
             };
     
             if (!isNew) {
@@ -467,10 +459,12 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                 const created = await createTodo(payload);
                 await saveTodoFile(created.todo_uuid, finalFileBlocks, []);
                 await saveTodoChck(created.todo_uuid, localCard.todo_chck, []);
+                await saveTodoAlarm(created.todo_uuid, localCard.todo_alrm || [], []);   // 추가
             } else {
                 await updateTodo(localCard.todo_uuid, payload);
                 await saveTodoFile(localCard.todo_uuid, finalFileBlocks, card?.todo_file || []);
                 await saveTodoChck(localCard.todo_uuid, localCard.todo_chck, card?.todo_chck || []);
+                await saveTodoAlarm(localCard.todo_uuid, localCard.todo_alrm || [], card?.todo_alrm || []);   // 추가
             }
             setIsDirty(false);
             isDirtyRef.current = false;
@@ -507,14 +501,21 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
             })),
         }));
     
+        const copiedAlarms = (localCard.todo_alrm || []).map((a) => ({
+            ...a,
+            alrm_uuid: crypto.randomUUID(),
+        }));
+
         setLocalCard((prev) => ({
             ...prev,
             todo_uuid: null,
             todo_name: `${prev.todo_name} (복사본)`,
             todo_file: copiedFileBlocks,
             todo_chck: copiedGroups,
+            todo_alrm: [],
         }));
-    
+
+        setAcctLinked([]);
         setIsDirty(true);
         closeDropdown();
     };
@@ -886,15 +887,18 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                 <div
                     className="prop-chip"
                     onClick={() => toggleDropdown("alarm")}
-                    style={localCard.todo_noti ? { background: "#eef3ff", color: "#4a8ef5", borderColor: "#4a8ef5", cursor: "pointer" } : { cursor: "pointer" }}
+                    style={(localCard.todo_alrm?.length ?? 0) > 0 ? { background: "#eef3ff", color: "#4a8ef5", borderColor: "#4a8ef5", cursor: "pointer" } : { cursor: "pointer" }}
                 >
                     <Ico.Cal />
-                    {localCard.todo_noti && localCard.noti_date
-                    ? `${localCard.noti_date.slice(5).replace("-", "/")} ${localCard.noti_time ? localCard.noti_time.slice(0, 5) : ""}`
-                    : "Alert"}
+                    {(localCard.todo_alrm?.length ?? 0) > 0 ? `Alert · ${localCard.todo_alrm.length}개` : "Alert"}
                 </div>
                 {openDropdown === "alarm" && (
-                    <AlarmPicker localCard={localCard} handleChange={handleChange} onClose={closeDropdown} />
+                    <AlarmPicker
+                        todoName={localCard.todo_name}
+                        alarms={localCard.todo_alrm || []}
+                        onChange={(list) => handleChange("todo_alrm", list)}
+                        onClose={closeDropdown}
+                    />
                 )}
                 </div>
 

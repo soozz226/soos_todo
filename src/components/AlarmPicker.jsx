@@ -1,126 +1,240 @@
-function AlarmPicker({ localCard, handleChange, onClose }) {
-    return (
-        <div className="modal-overlay" onClick={onClose} style={{ zIndex: 300 }}>
-        <div
-            className="modal-sheet"
-            onClick={(e) => e.stopPropagation()}
-            style={{ padding: "20px 24px 40px" }}
-        >
-            <div className="modal-close" onClick={onClose}>✕</div>
-            <div style={{ margin: "0 auto 20px" }} />
-            <div style={{ fontSize: 17, fontWeight: 700, color: "#1e2a3a", marginBottom: 6 }}>카드 알림 설정</div>
-            <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 24 }}>
-            {localCard.todo_name || "(제목 없음)"}
+// src/components/AlarmPicker.jsx
+// 카드 알림 여러 개 관리 시트 — 목록 / 추가 / 수정 / 삭제
+// alarms: 현재 카드의 알림 배열, onChange(newList): 바뀐 목록을 부모(CardDetail)에 전달
+import { useState } from "react";
+import { fmtDate } from "../utils/dateUtils";
+import { WEEK_LABELS } from "../constants/entryTypes";
+import { alarmSummary } from "../utils/alarmUtils";
+
+const REPEAT_OPTIONS = [
+{ id: "none", label: "한 번" },
+{ id: "day", label: "매일" },
+{ id: "week", label: "매주" },
+{ id: "month", label: "매월" },
+];
+const UNIT = { day: "일마다", week: "주마다", month: "개월마다" };
+
+const inputStyle = {
+width: "100%", border: "1.5px solid #dde1ea", borderRadius: 12,
+padding: "12px 16px", fontSize: 16, fontFamily: "inherit",
+outline: "none", color: "#1e2a3a", boxSizing: "border-box",
+};
+const labelStyle = { fontSize: 13, fontWeight: 600, color: "#6b7280", marginBottom: 8 };
+
+const newDraft = () => ({
+alrm_uuid: null,
+alrm_date: fmtDate(new Date()),
+alrm_time: "09:00",
+alrm_note: "",
+alrm_rpt: "none",
+alrm_intv: 1,
+alrm_days: [],
+alrm_end: "",
+});
+
+const toDraft = (a) => ({
+...a,
+alrm_time: (a.alrm_time || "09:00").slice(0, 5),
+alrm_note: a.alrm_note || "",
+alrm_days: a.alrm_days || [],
+alrm_end: a.alrm_end || "",
+alrm_intv: a.alrm_intv || 1,
+});
+
+function AlarmPicker({ todoName, alarms, onChange, onClose }) {
+const [draft, setDraft] = useState(null); // null이면 목록 화면, 값이 있으면 추가/수정 화면
+
+const patch = (p) => setDraft((d) => ({ ...d, ...p }));
+const toggleDay = (i) =>
+patch({ alrm_days: draft.alrm_days.includes(i) ? draft.alrm_days.filter((d) => d !== i) : [...draft.alrm_days, i] });
+
+const canSave =
+draft &&
+draft.alrm_date && draft.alrm_time &&
+(draft.alrm_rpt !== "week" || draft.alrm_days.length > 0) &&
+(!draft.alrm_end || draft.alrm_end >= draft.alrm_date);
+
+const saveDraft = () => {
+if (!canSave) return;
+const isOnce = draft.alrm_rpt === "none";
+const row = {
+...draft,
+alrm_uuid: draft.alrm_uuid || crypto.randomUUID(),
+alrm_note: draft.alrm_note.trim(),
+alrm_intv: isOnce ? 1 : draft.alrm_intv,
+alrm_days: draft.alrm_rpt === "week" ? [...draft.alrm_days].sort() : [],
+alrm_end: isOnce ? "" : draft.alrm_end,
+};
+const exists = alarms.some((a) => a.alrm_uuid === row.alrm_uuid);
+onChange(exists ? alarms.map((a) => (a.alrm_uuid === row.alrm_uuid ? row : a)) : [...alarms, row]);
+setDraft(null);
+};
+
+const removeAlarm = (id) => onChange(alarms.filter((a) => a.alrm_uuid !== id));
+
+const sorted = [...alarms].sort((a, b) =>
+`${a.alrm_date} ${(a.alrm_time || "").slice(0, 5)}`.localeCompare(`${b.alrm_date} ${(b.alrm_time || "").slice(0, 5)}`)
+);
+
+return (
+<div className="modal-overlay" onClick={onClose} style={{ zIndex: 300 }}>
+<div
+className="modal-sheet"
+onClick={(e) => e.stopPropagation()}
+style={{ padding: "20px 24px 40px", maxHeight: "90vh", overflowY: "auto" }}
+>
+<div className="modal-close" onClick={onClose}>✕</div>
+<div style={{ margin: "0 auto 20px" }} />
+<div style={{ fontSize: 17, fontWeight: 700, color: "#1e2a3a", marginBottom: 6 }}>카드 알림 설정</div>
+<div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 20 }}>{todoName || "(제목 없음)"}</div>
+
+{!draft ? (
+    <>
+    {sorted.length === 0 && (
+        <div style={{ textAlign: "center", padding: "24px 0", fontSize: 13, color: "#9ca3af" }}>설정된 알림이 없어요</div>
+    )}
+    {sorted.map((a) => (
+        <div key={a.alrm_uuid} style={{ display: "flex", alignItems: "center", gap: 10, padding: "12px 0", borderBottom: "1px solid #f0f2f7" }}>
+        <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => setDraft(toDraft(a))}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#1e2a3a" }}>{alarmSummary(a)}</div>
+            {a.alrm_note && (
+            <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {a.alrm_note}
             </div>
-    
-            {/* 알림 ON/OFF */}
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-            <div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: "#1e2a3a" }}>알림 사용</div>
-                <div style={{ fontSize: 12, color: "#9ca3af", marginTop: 3 }}>지정 날짜·시간에 알림을 받아요</div>
-            </div>
-            <div
-                onClick={() => handleChange("todo_noti", !localCard.todo_noti)}
-                style={{
-                width: 50, height: 28, borderRadius: 14, cursor: "pointer",
-                background: localCard.todo_noti ? "#4a8ef5" : "#e5e7eb",
-                position: "relative", transition: "background 0.2s",
-                }}
-            >
-                <div
-                style={{
-                    position: "absolute", top: 3, left: localCard.todo_noti ? 24 : 3,
-                    width: 22, height: 22, borderRadius: "50%", background: "#fff",
-                    transition: "left 0.2s", boxShadow: "0 1px 4px rgba(0,0,0,0.18)",
-                }}
-                />
-            </div>
-            </div>
-    
-            {localCard.todo_noti && (
-            <>
-                <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#6b7280", marginBottom: 8 }}>알림 날짜</div>
-                <input
-                    type="date"
-                    value={localCard.noti_date || ""}
-                    min={new Date().toISOString().slice(0, 10)}
-                    onChange={(e) => handleChange("noti_date", e.target.value)}
-                    style={{
-                    width: "100%", border: "1.5px solid #dde1ea", borderRadius: 12,
-                    padding: "12px 16px", fontSize: 16, fontFamily: "inherit",
-                    outline: "none", color: "#1e2a3a",
-                    }}
-                />
-                </div>
-    
-                <div style={{ marginBottom: 24 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#6b7280", marginBottom: 8 }}>알림 시간</div>
-                <input
-                    type="time"
-                    value={localCard.noti_time?.slice(0, 5) || ""}
-                    onChange={(e) => handleChange("noti_time", e.target.value)}
-                    style={{
-                    width: "100%", border: "1.5px solid #dde1ea", borderRadius: 12,
-                    padding: "12px 16px", fontSize: 16, fontWeight: 700, fontFamily: "inherit",
-                    outline: "none", color: "#1e2a3a", textAlign: "center",
-                    }}
-                />
-                </div>
-    
-                <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#6b7280", marginBottom: 8 }}>
-                    알림 메시지 <span style={{ fontWeight: 400, color: "#c4c9d4" }}>(선택)</span>
-                </div>
-                <textarea
-                    value={localCard.noti_note || ""}
-                    onChange={(e) => handleChange("noti_note", e.target.value)}
-                    placeholder="알림에 표시할 메시지를 입력하세요"
-                    rows={3}
-                    style={{
-                    width: "100%", border: "1.5px solid #dde1ea", borderRadius: 12,
-                    padding: "12px 16px", fontSize: 14, fontFamily: "inherit",
-                    outline: "none", color: "#1e2a3a", resize: "none",
-                    lineHeight: 1.6, boxSizing: "border-box",
-                    }}
-                />
-                </div>
-    
-                {localCard.noti_date && (
-                <div style={{ background: "#eef3ff", borderRadius: 12, padding: "12px 16px", marginBottom: 20 }}>
-                    <div style={{ fontSize: 12, color: "#9ca3af", marginBottom: 6 }}>알림 미리보기</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "#1e2a3a", marginBottom: 4 }}>
-                    {localCard.todo_name || "(제목 없음)"}
-                    </div>
-                    <div style={{ fontSize: 13, color: "#4a8ef5" }}>
-                    {localCard.noti_note?.trim() || "카드를 확인해보세요"}
-                    </div>
-                    <div style={{ fontSize: 11, color: "#9ca3af", marginTop: 6 }}>
-                    🔔 {localCard.noti_date} {localCard.noti_time?.slice(0, 5)}
-                    </div>
-                </div>
-                )}
-            </>
             )}
-    
+        </div>
+        <div style={{ fontSize: 14, color: "#c4c9d4", padding: "4px 6px", cursor: "pointer" }} onClick={() => removeAlarm(a.alrm_uuid)}>✕</div>
+        </div>
+    ))}
+
+    <div
+        onClick={() => setDraft(newDraft())}
+        style={{ margin: "16px 0 20px", padding: "12px 0", textAlign: "center", fontSize: 14, fontWeight: 600, color: "#4a8ef5", border: "1.5px dashed #4a8ef5", borderRadius: 12, cursor: "pointer" }}
+    >
+        ＋ 알림 추가
+    </div>
+
+    <div
+        onClick={onClose}
+        style={{ width: "100%", padding: "14px 0", borderRadius: 14, textAlign: "center", fontSize: 16, fontWeight: 700, cursor: "pointer", background: "#4a8ef5", color: "#fff" }}
+    >
+        확인
+    </div>
+    </>
+) : (
+    <>
+    <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+        <div style={{ flex: 1 }}>
+        <div style={labelStyle}>{draft.alrm_rpt === "none" ? "알림 날짜" : "시작일"}</div>
+        <input type="date" value={draft.alrm_date} onChange={(e) => patch({ alrm_date: e.target.value })} style={inputStyle} />
+        </div>
+        <div style={{ flex: 1 }}>
+        <div style={labelStyle}>알림 시간</div>
+        <input type="time" value={draft.alrm_time} onChange={(e) => patch({ alrm_time: e.target.value })} style={{ ...inputStyle, fontWeight: 700, textAlign: "center" }} />
+        </div>
+    </div>
+
+    <div style={{ marginBottom: 16 }}>
+        <div style={labelStyle}>반복</div>
+        <div style={{ display: "flex", gap: 8 }}>
+        {REPEAT_OPTIONS.map((o) => (
             <div
-            onClick={() => {
-                if (localCard.todo_noti && !localCard.noti_date) return;
-                onClose();
-            }}
+            key={o.id}
+            onClick={() => patch({ alrm_rpt: o.id, alrm_intv: 1 })}
             style={{
-                width: "100%", padding: "14px 0", borderRadius: 14, textAlign: "center",
-                fontSize: 16, fontWeight: 700,
-                cursor: localCard.todo_noti && !localCard.noti_date ? "not-allowed" : "pointer",
-                background: localCard.todo_noti && !localCard.noti_date ? "#e5e7eb" : "#4a8ef5",
-                color: localCard.todo_noti && !localCard.noti_date ? "#9ca3af" : "#fff",
+                flex: 1, textAlign: "center", padding: "9px 0", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer",
+                background: draft.alrm_rpt === o.id ? "#4a8ef5" : "#f0f2f7",
+                color: draft.alrm_rpt === o.id ? "#fff" : "#6b7280",
             }}
             >
-            확인
+            {o.label}
             </div>
+        ))}
         </div>
+    </div>
+
+    {draft.alrm_rpt !== "none" && (
+        <>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <input
+            type="number" min="1" max="99" value={draft.alrm_intv}
+            onChange={(e) => patch({ alrm_intv: Math.max(1, Number(e.target.value) || 1) })}
+            style={{ ...inputStyle, width: 72, padding: "10px 12px", fontWeight: 700, textAlign: "center" }}
+            />
+            <span style={{ fontSize: 15, color: "#6b7280" }}>{UNIT[draft.alrm_rpt]}</span>
         </div>
-    );
-    }
-    
-    export default AlarmPicker;
+
+        {draft.alrm_rpt === "week" && (
+            <div style={{ marginBottom: 16 }}>
+            <div style={labelStyle}>요일 선택</div>
+            <div style={{ display: "flex", gap: 6 }}>
+                {WEEK_LABELS.map((lbl, i) => {
+                const on = draft.alrm_days.includes(i);
+                return (
+                    <div
+                    key={i} onClick={() => toggleDay(i)}
+                    style={{
+                        flex: 1, textAlign: "center", padding: "9px 0", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer",
+                        background: on ? "#eef3ff" : "#f0f2f7",
+                        color: on ? "#4a8ef5" : i === 0 ? "#ef4444" : "#9ca3af",
+                        border: on ? "2px solid #4a8ef5" : "2px solid transparent",
+                    }}
+                    >
+                    {lbl}
+                    </div>
+                );
+                })}
+            </div>
+            </div>
+        )}
+
+        {draft.alrm_rpt === "month" && (
+            <div style={{ fontSize: 12, color: "#9ca3af", marginBottom: 16 }}>
+            시작일의 날짜({draft.alrm_date ? Number(draft.alrm_date.slice(8, 10)) : "-"}일)에 울려요. 그 달에 없는 날이면 말일에 울려요.
+            </div>
+        )}
+
+        <div style={{ marginBottom: 16 }}>
+            <div style={labelStyle}>종료일 <span style={{ fontWeight: 400, color: "#c4c9d4" }}>(선택, 비우면 계속 반복)</span></div>
+            <input type="date" value={draft.alrm_end} min={draft.alrm_date} onChange={(e) => patch({ alrm_end: e.target.value })} style={inputStyle} />
+        </div>
+        </>
+    )}
+
+    <div style={{ marginBottom: 20 }}>
+        <div style={labelStyle}>알림 메시지 <span style={{ fontWeight: 400, color: "#c4c9d4" }}>(선택)</span></div>
+        <textarea
+        value={draft.alrm_note}
+        onChange={(e) => patch({ alrm_note: e.target.value })}
+        placeholder="알림에 표시할 메시지를 입력하세요"
+        rows={2}
+        style={{ ...inputStyle, fontSize: 14, resize: "none", lineHeight: 1.6 }}
+        />
+    </div>
+
+    <div style={{ display: "flex", gap: 8 }}>
+        <div
+        onClick={() => setDraft(null)}
+        style={{ flex: 1, padding: "14px 0", borderRadius: 14, textAlign: "center", fontSize: 15, fontWeight: 700, cursor: "pointer", background: "#f0f2f7", color: "#6b7280" }}
+        >
+        취소
+        </div>
+        <div
+        onClick={saveDraft}
+        style={{
+            flex: 2, padding: "14px 0", borderRadius: 14, textAlign: "center", fontSize: 16, fontWeight: 700,
+            cursor: canSave ? "pointer" : "not-allowed",
+            background: canSave ? "#4a8ef5" : "#e5e7eb", color: canSave ? "#fff" : "#9ca3af",
+        }}
+        >
+        {draft.alrm_uuid ? "수정" : "추가"}
+        </div>
+    </div>
+    </>
+)}
+</div>
+</div>
+);
+}
+
+export default AlarmPicker;
