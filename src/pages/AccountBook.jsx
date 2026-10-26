@@ -112,13 +112,13 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
   const gridEndDate = new Date(gridStartDate.getFullYear(), gridStartDate.getMonth(), gridStartDate.getDate() + 41);
 
   const { data: entries, reload: sync } = useFetch(() =>
-    fetchAcctEntriesRange(fmtDate(gridStartDate), fmtDate(gridEndDate), book), [calYear, calMonth, book]
+    fetchAcctEntriesRange(fmtDate(gridStartDate), fmtDate(gridEndDate), book), [calYear, calMonth, book], "acct-entries"
   );
 
-  const { data: books } = useFetch(() => fetchAcctBookCodes(), []);
+  const { data: books } = useFetch(() => fetchAcctBookCodes(), [], "acct-books");
 
-  const { data: typeCodes } = useFetch(() => fetchAcctCodes(), []);
-
+  const { data: typeCodes } = useFetch(() => fetchAcctCodes(), [], "acct-codes");
+  
   // 내역의 acct_type 코드로 acct_code에서 이름/아이콘을 찾음
   const resolveType = (e) => {
     const t = (typeCodes || []).find(

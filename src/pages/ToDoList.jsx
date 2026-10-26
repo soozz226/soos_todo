@@ -3,6 +3,7 @@ import { useFetch } from "../hooks/useFetch";
 import { fetchAllChckItems, updateChckItem } from "../api/todoApi";
 import Header from "../components/Header";
 import QuickNav from "../components/QuickNav";
+import { refreshNotifications } from "../utils/notify";
 import WinCheckModal from "../components/WinCheckModal";
 import CalendarPicker from "../components/CalendarPicker";
 import { fmtDate as fmt, fmtDisplay } from "../utils/dateUtils";
@@ -25,7 +26,7 @@ function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
 
 /* ────────────────── Daily ToDo Screen ────────────────── */
 function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings, onQuickNav }) {
-  const { data: cards, loading, reload: sync, } = useFetch(fetchAllChckItems);
+  const { data: cards, loading, reload: sync, } = useFetch(fetchAllChckItems, [], "todo-chck-all");
   const [isSyncing, setIsSyncing] = useState(false);
 
   const handleSync = async () => {
@@ -89,6 +90,7 @@ function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings, o
     try {
       await updateChckItem(itemId, patch);
       sync();
+      refreshNotifications(); // 체크 결과를 알림에 바로 반영
     } catch (err) {
       console.error("항목 업데이트 실패:", err);
     }

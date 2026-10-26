@@ -13,6 +13,8 @@ import AcctSettings from './pages/AcctSettings'
 import AcctBookSettings from './pages/AcctBookSettings'
 import AcctPhraseSettings from './pages/AcctPhraseSettings'
 import { CapacitorShareTarget } from '@capgo/capacitor-share-target'
+import { App as CapApp } from '@capacitor/app'
+import { refreshNotifications } from './utils/notify'
 
 function App() {
   const { user } = useUser();
@@ -27,6 +29,18 @@ function App() {
     }).then((h) => { handle = h; });
     return () => { handle?.remove(); };
   }, [push]);
+
+  // 화면을 옮길 때마다 알림 다시 예약 (카드 저장 후 돌아올 때도 여기서 처리됨)
+  useEffect(() => { refreshNotifications(); }, [screen.name]);
+
+  // 앱을 다시 열었을 때도 알림 다시 예약
+  useEffect(() => {
+    let handle;
+    CapApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) refreshNotifications();
+    }).then((h) => { handle = h; });
+    return () => { handle?.remove(); };
+  }, []);
 
   const openCardDetail = (todoUuid = null) =>
     push({ name: 'carddetail', todoUuid });

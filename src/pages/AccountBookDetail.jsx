@@ -94,16 +94,22 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
 
   const adjValue = Number(adjText || 0);
   const adjBase = Number(amount || 0);
-  const adjResult = adjOp === "add" ? adjBase + adjValue : adjBase - adjValue;
-  const adjNegative = adjResult < 0;
-  const canApplyAdj = adjText !== "" && !adjNegative && String(adjResult).length <= 12;
+
+  // 화면에 보이는 부호 기준(수입 +, 지출 -)으로 계산
+  const adjSigned = adjOp === "add" ? adjValue : -adjValue;
+  const adjSignedResult = (isIn ? adjBase : -adjBase) + adjSigned;
+  // 결과가 +면 수입, -면 지출, 0이면 지금 구분 유지
+  const adjToIn = adjSignedResult > 0 ? true : adjSignedResult < 0 ? false : isIn;
+  const adjResult = Math.abs(adjSignedResult);
+  const adjFlipped = adjToIn !== isIn;
+  const canApplyAdj = adjText !== "" && String(adjResult).length <= 12;
 
   const applyAdj = () => {
     if (!canApplyAdj) return;
+    if (adjFlipped) changeIofl(adjToIn ? "A001" : "A002");
     setAmount(String(adjResult));
     setAdjText("");
   };
-
   const handleSave = async () => {
     if (!canSave) return;
 
@@ -205,12 +211,10 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
                 적용
               </button>
             </div>
-            <div className={`acct-d-adj-preview ${adjNegative ? "neg" : ""}`}>
+            <div className="acct-d-adj-preview">
               {adjText === ""
                 ? `기존 ${adjBase.toLocaleString()}원`
-                : adjNegative
-                  ? "결과가 0원보다 작아서 적용할 수 없어요"
-                  : `${adjBase.toLocaleString()} ${adjOp === "add" ? "+" : "−"} ${adjValue.toLocaleString()} = ${adjResult.toLocaleString()}원`}
+                : `${isIn ? "" : "-"}${adjBase.toLocaleString()} ${adjOp === "add" ? "+" : "−"} ${adjValue.toLocaleString()} = ${adjSignedResult < 0 ? "-" : ""}${adjResult.toLocaleString()}원`}
             </div>
           </div>
         )}

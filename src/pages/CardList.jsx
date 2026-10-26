@@ -55,11 +55,10 @@ function FilterPill({ label, active, activeColor, onClick }) {
 function CardList({ onBack, onUser, onOpenCard, onQuickNav }) {
     
     // 카드
-    const { data: cards, loading: isSyncing, reload: sync } = useFetch(fetchToDoCards);
-
+    const { data: cards, loading: isSyncing, reload: sync } = useFetch(fetchToDoCards, [], "todo-cards");
     // 탭 상태
     const [activeStatus, setActiveStatus] = useState("A001"); //Backlog
-    const { data: status } = useFetch(fetchToDoStatusCodes);
+    const { data: status } = useFetch(fetchToDoStatusCodes, [], "todo-status");
     const activeStatusInfo = status.find((s) => s.code_cdid === activeStatus);
     const IconComponent = Ico[activeStatusInfo?.code_cdnm];
 
@@ -73,8 +72,8 @@ function CardList({ onBack, onUser, onOpenCard, onQuickNav }) {
     const [activeTag, setActiveTag] = useState("all"); // 드롭박스 선택값
     const [activeSub, setActiveSub] = useState("all"); // 드롭박스 선택값
     
-    const { data: tags } = useFetch(fetchToDoTagCodes);
-    const { data: subs } = useFetch(fetchToDoSubCodes);
+    const { data: tags } = useFetch(fetchToDoTagCodes, [], "todo-tags");
+    const { data: subs } = useFetch(fetchToDoSubCodes, [], "todo-subs");
 
     const activeTagInfo = tags.find((t) => t.code_cdid === activeTag);
     const activeSubInfo = subs.find((s) => s.code_cdid === activeSub);

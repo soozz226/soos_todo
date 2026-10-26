@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
+import { fmtDate } from "../utils/dateUtils";
 
 /* ────────────────── 코드 테이블 조회 ──────────────────
   ⚠️ code_flag 값('STATUS','T','S' 등)은 실제 DB에 저장된 값과
@@ -42,21 +43,25 @@ export async function fetchToDoSubCodes() {
 /* ────────────────── 카드 목록 (CardList용, 가벼운 조회) ────────────────── */
 
 export async function fetchToDoCards() {
-  const { data: cards, error } = await supabase
-    .from("soos_todo")
-    .select(`
-      todo_uuid, todo_name, todo_stat, todo_tags, todo_subs, todo_rgdt,
-      todo_chck (
-        chck_uuid,
-        todo_chck_item ( item_uuid, item_done )
-      )
-    `)
-    .order("todo_rgdt", { ascending: false });
+  const [cardsRes, tagsRes, subsRes] = await Promise.all([
+    supabase
+      .from("soos_todo")
+      .select(`
+        todo_uuid, todo_name, todo_stat, todo_tags, todo_subs, todo_rgdt,
+        todo_chck (
+          chck_uuid,
+          todo_chck_item ( item_uuid, item_done )
+        )
+      `)
+      .order("todo_rgdt", { ascending: false }),
+    supabase.from("todo_code").select("*").eq("code_flag", "T"),
+    supabase.from("todo_code").select("*").eq("code_flag", "S"),
+  ]);
 
+  const { data: cards, error } = cardsRes;
   if (error) throw error;
-
-  const { data: tags } = await supabase.from("todo_code").select("*").eq("code_flag", "T");
-  const { data: subs } = await supabase.from("todo_code").select("*").eq("code_flag", "S");
+  const tags = tagsRes.data;
+  const subs = subsRes.data;
 
   return cards.map((c) => {
     const tagInfo = tags?.find((t) => t.code_cdid === c.todo_tags);
@@ -78,6 +83,14 @@ export async function fetchToDoCards() {
   });
 }
 
+// 체크리스트 항목을 날짜 빠른 순으로 정렬 (날짜 없는 항목은 맨 아래, 같은 날짜끼리는 기존 순서 유지)
+const sortChckItems = (items = []) =>
+  [...items].sort((a, b) => {
+    if (!a.item_date && !b.item_date) return 0;
+    if (!a.item_date) return 1;
+    if (!b.item_date) return -1;
+    return a.item_date < b.item_date ? -1 : a.item_date > b.item_date ? 1 : 0;
+  });
 /* ────────────────── 카드 상세 (CardDetail용, 전체 조회) ────────────────── */
 
 export async function fetchToDoCardDetail(todoUuid) {
@@ -101,6 +114,10 @@ export async function fetchToDoCardDetail(todoUuid) {
 
   return {
     ...data,
+    todo_chck: (data.todo_chck || []).map((g) => ({
+      ...g,
+      todo_chck_item: sortChckItems(g.todo_chck_item),
+    })),
     todo_tagnm: tagInfo?.code_cdnm,
     todo_tagbg: tagInfo?.code_bgcl,
     todo_tagfg: tagInfo?.code_fgcl,
@@ -333,20 +350,22 @@ export async function copyTodoFile(oldPath, newPath) {
 /* ────────────────── Daily ToDo 조회 (전체 카드의 체크리스트 아이템) ────────────────── */
 
 export async function fetchAllChckItems() {
-  const { data, error } = await supabase
-    .from("soos_todo")
-    .select(`
-      todo_uuid, todo_name, todo_tags, todo_subs,
-      todo_chck (
-        chck_uuid, chck_name,
-        todo_chck_item ( item_uuid, item_name, item_done, item_date, item_type, item_rslt )
-      )
-    `);
+  const [cardsRes, subsRes] = await Promise.all([
+    supabase
+      .from("soos_todo")
+      .select(`
+        todo_uuid, todo_name, todo_tags, todo_subs,
+        todo_chck (
+          chck_uuid, chck_name,
+          todo_chck_item ( item_uuid, item_name, item_done, item_date, item_type, item_rslt )
+        )
+      `),
+    supabase.from("todo_code").select("*").eq("code_flag", "S"),
+  ]);
 
+  const { data, error } = cardsRes;
   if (error) throw error;
-
-  const { data: subs } = await supabase.from("todo_code").select("*").eq("code_flag", "S");
-
+  const subs = subsRes.data;
   return data.map((c) => {
     const subInfo = subs?.find((s) => s.code_cdid === c.todo_subs);
     return { ...c, todo_subnm: subInfo?.code_cdnm };
@@ -356,4 +375,17 @@ export async function fetchAllChckItems() {
 export async function updateChckItem(itemUuid, patch) {
   const { error } = await supabase.from("todo_chck_item").update(patch).eq("item_uuid", itemUuid);
   if (error) throw error;
+}
+
+/* ────────────────── 카드 알림 조회 (알림 설정한 카드만, 오늘 이후) ────────────────── */
+
+export async function fetchNotiCards() {
+  const { data, error } = await supabase
+    .from("soos_todo")
+    .select("todo_uuid, todo_name, noti_date, noti_time, noti_note")
+    .eq("todo_noti", true)
+    .gte("noti_date", fmtDate(new Date()));
+
+  if (error) throw error;
+  return data;
 }
