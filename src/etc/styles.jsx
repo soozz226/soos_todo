@@ -8,19 +8,23 @@ body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; }
 .welcome-screen { max-width: 100%; margin: 0 auto; padding: 24px 20px; min-height: 100vh;background: #f0f2f7;  }
 .back-row { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 600; color: #1e2a3a; margin-bottom: 28px; cursor: pointer; }
 .workspace-row { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
-.ws-icon { width: 72px; height: 72px; background: #dde8f7; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; overflow: hidden; }
 .ws-icon-img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ws-name { font-size: 20px; font-weight: 600; color: #1e2a3a; margin-bottom: 4px; }
 .ws-meta { font-size: 14px; color: #6b7280; }
 .sec-title { font-size: 17px; font-weight: 600; color: #1e2a3a; margin-bottom: 12px; }
 .sec { margin-bottom: 24px; }
-.list-item { background: #e8ebf2; border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; margin-bottom: 10px; cursor: pointer; transition: background .15s; }
-.list-item:hover { background: #d8dce8; }
-.li-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #4a5568; flex-shrink: 0; }
 .li-text { flex: 1; }
 .li-name { font-size: 16px; font-weight: 500; color: #1e2a3a; }
-.li-type { font-size: 13px; color: #6b7280; margin-top: 2px; }
 .chevron { color: #9ca3af; font-size: 20px; }
+.ws-icon { width: 72px; height: 72px; background: #dde8f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; flex-shrink: 0; overflow: hidden; }
+.list-item { background: #fff; border-radius: 18px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.06); transition: background .15s; }
+.list-item:hover { background: #f7f8fb; }
+.li-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.li-icon svg { width: 26px; height: 26px; }
+.li-icon.blue { background: #e8f1ff; color: #2f6fd6; }
+.li-icon.green { background: #eaf6ec; color: #2e7d46; }
+.li-icon.orange { background: #fff3e0; color: #b36a00; }
+.li-type { font-size: 12px; color: #5b6472; }
 
 /* ── Board ── */
 .board-screen { max-width: 100%; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; background:#f5f6f8; }

@@ -572,45 +572,45 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
         </div>
 
         {!loading && !isNew && openDropdown === "menu" && (
-            <div className="modal-overlay" onClick={closeDropdown} style={{ zIndex: 300 }}>
-                <div className="modal-sheet" onClick={(e) => e.stopPropagation()} style={{ padding: "20px 24px 40px" }}>
-                    <div className="modal-close" onClick={closeDropdown}>✕</div>
-                    <div style={{ margin: "0 auto 20px" }} />
-                    <div style={{ fontSize: 17, fontWeight: 700, color: "#1e2a3a", marginBottom: 6 }}>카드 관리</div>
-                    <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 20 }}>
-                        {localCard.todo_name || "(제목 없음)"}
+        <div className="modal-overlay" onClick={closeDropdown} style={{ zIndex: 300 }}>
+            <div className="modal-sheet" onClick={(e) => e.stopPropagation()} style={{ padding: "24px 20px 36px" }}>
+                <div className="modal-close" onClick={closeDropdown}>✕</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#1e2a3a" }}>카드 관리</div>
+                <div style={{ fontSize: 13, color: "#5b6472", marginTop: 4 }}>
+                    {localCard.todo_name || "(제목 없음)"}
+                </div>
+
+                <div
+                    onClick={() => { if (!copying) { closeDropdown(); handleCopyCard(); } }}
+                    style={{
+                        display: "flex", alignItems: "center", gap: 14,
+                        marginTop: 18, padding: "14px 4px",
+                        cursor: copying ? "not-allowed" : "pointer",
+                        opacity: copying ? 0.5 : 1,
+                    }}
+                >
+                    <span style={{ color: "#2f6fd6", display: "flex" }}><Ico.Copy /></span>
+                    <div>
+                        <div style={{ fontSize: 15, fontWeight: 600, color: "#1e2a3a" }}>{copying ? "복사 중..." : "카드 복사"}</div>
+                        <div style={{ fontSize: 12, color: "#5b6472", marginTop: 3 }}>내용·체크리스트를 그대로 새 카드로 만들어요</div>
                     </div>
+                </div>
 
-                    <div style={{ background: "#f8f9fb", borderRadius: 16, padding: 6, marginBottom: 0 }}>
-                        <div
-                            onClick={() => { if (!copying) { closeDropdown(); handleCopyCard(); } }}
-                            style={{
-                                display: "flex", alignItems: "center", gap: 12,
-                                padding: "14px 12px", borderRadius: 12,
-                                cursor: copying ? "not-allowed" : "pointer",
-                                opacity: copying ? 0.5 : 1,
-                            }}
-                        >
-                            <Ico.Copy style={{ fontSize: 19, color: "#6b7280" }} />
-                            <span style={{ fontSize: 15, fontWeight: 500, color: "#1e2a3a" }}>{copying ? "복사 중..." : "카드 복사"}</span>
-                        </div>
+                <div style={{ height: 1, background: "#eef0f4", margin: "4px 0" }} />
 
-                        <div style={{ height: 1, background: "#e5e7eb", margin: "0 4px" }} />
-
-                        <div
-                            onClick={() => { closeDropdown(); handleDelete(); }}
-                            style={{
-                                display: "flex", alignItems: "center", gap: 12,
-                                padding: "14px 12px", borderRadius: 12, cursor: "pointer",
-                            }}
-                        >
-                            <Ico.Trash style={{ fontSize: 19, color: "#e5484d" }} />
-                            <span style={{ fontSize: 15, fontWeight: 500, color: "#e5484d" }}>카드 삭제</span>
-                        </div>
+                <div
+                    onClick={() => { closeDropdown(); handleDelete(); }}
+                    style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 4px", cursor: "pointer" }}
+                >
+                    <span style={{ color: "#d9463f", display: "flex" }}><Ico.Trash /></span>
+                    <div>
+                        <div style={{ fontSize: 15, fontWeight: 600, color: "#d9463f" }}>카드 삭제</div>
+                        <div style={{ fontSize: 12, color: "#5b6472", marginTop: 3 }}>삭제하면 되돌릴 수 없어요</div>
                     </div>
                 </div>
             </div>
-        )}
+        </div>
+    )}
 
         {loading ? (
             <div

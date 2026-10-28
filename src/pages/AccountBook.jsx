@@ -118,7 +118,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
   const { data: books } = useFetch(() => fetchAcctBookCodes(), [], "acct-books");
 
   const { data: typeCodes } = useFetch(() => fetchAcctCodes(), [], "acct-codes");
-  
+
   // 내역의 acct_type 코드로 acct_code에서 이름/아이콘을 찾음
   const resolveType = (e) => {
     const t = (typeCodes || []).find(
@@ -141,12 +141,15 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
   const nonZeroEntries = baseEntries.filter((e) => !e.acct_zero);
   const totalIn = sumBy(nonZeroEntries, "A001");
   const totalOut = sumBy(nonZeroEntries, "A002");
+  const netMonth = totalIn - totalOut; // 수입 - 지출 (보관금 제외)
   
   // 보관금 포함 (작은 숫자로 표시, 총 잔액 계산에도 사용)
   const totalInAll = sumBy(baseEntries, "A001");
   const totalOutAll = sumBy(baseEntries, "A002");
   const totalBalance = carryAmount + totalInAll - totalOutAll;
-
+  const zeroIn = totalInAll - totalIn;    // 보관금 중 수입
+  const zeroOut = totalOutAll - totalOut; // 보관금 중 지출
+  const zeroNet = zeroIn - zeroOut;       // 보관금 합친 값
   const zeroEntries = baseEntries.filter((e) => e.acct_zero);
 
   // 달력 칸에 표시할 내역: 이전/다음 달 칸 포함 (이월, 보관금 제외)
@@ -276,44 +279,63 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
           <div style={{ padding: "12px 12px 10px" ,background: "#f5f6f8" }}>
             <div style={{ display: "flex" }}>
               <div style={{ flex: 1, textAlign: "center", cursor: "pointer" }} onClick={openCarry}>
-                <div style={{ fontSize: 11, color: "#9ca3af" }}>총 수입</div>
+                <div style={{ fontSize: 11, color: "#4b5563" }}>수입</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#2e9e4f", marginTop: 3 }}>
                   +{totalIn.toLocaleString()}원
                 </div>
-                {totalInAll !== totalIn && (
-                  <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 2 }}>
-                    보관금 +{totalInAll.toLocaleString()} 포함
-                  </div>
-                )}
               </div>
               <div style={{ flex: 1, textAlign: "center" }}>
-                <div style={{ fontSize: 11, color: "#9ca3af" }}>총 지출</div>
+                <div style={{ fontSize: 11, color: "#4b5563" }}>지출</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#d9463f", marginTop: 3 }}>
                   -{totalOut.toLocaleString()}원
                 </div>
-                {totalOutAll !== totalOut && (
-                  <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 2 }}>
-                    보관금 -{totalOutAll.toLocaleString()} 포함
-                  </div>
-                )}
               </div>
               <div style={{ flex: 1, textAlign: "center" }}>
-                <div style={{ fontSize: 11, color: "#9ca3af" }}>총 잔액</div>
+                <div style={{ fontSize: 11, color: "#4b5563" }}>잔액</div>
                 <div style={{ fontSize: 15, fontWeight: 700, color: "#1e2a3a", marginTop: 3 }}>
                   {totalBalance.toLocaleString()}원
                 </div>
-                {carryRow && (
-                  <div style={{ fontSize: 10, color: "#9ca3af", marginTop: 2 }}>
-                    이월 {carryAmount.toLocaleString()} 포함
-                  </div>
-                )}
               </div>
 
               <div style={{ flex: 1, textAlign: "center", cursor: "pointer" }} onClick={() => setIsZeroOpen(true)}>
-                <div style={{ fontSize: 11, color: "#9ca3af" }}>보관금</div>
+                <div style={{ fontSize: 11, color: "#4b5563" }}>보관금</div>
                 <div className={`acct-star ${zeroEntries.length > 0 ? "has-items" : ""}`}>⭐</div>
               </div>
             </div>
+{/* 수입-지출 / 이월 포함 / 보관금 합친 값 */}
+{(() => {
+  const AMT = { fontWeight: 700, color: "#654235" }; // 금액 색 (여기만 바꾸면 세 곳 모두 바뀜)
+  return (
+    <div style={{ display: "flex", marginTop: 6 }}>
+      <div style={{ flex: 2, textAlign: "center", fontSize: 10, color: "#9ca3af" }}>
+      {netMonth !== 0 && (
+        <>
+        수익{" "}
+        <span style={AMT}>{netMonth > 0 ? "+" : ""}{netMonth.toLocaleString()}</span>
+        </>
+      )}
+    </div>
+
+      <div style={{ flex: 1, textAlign: "center", fontSize: 10, color: "#9ca3af" }}>
+        {carryRow && (
+          <>
+            이월{" "}
+            <span style={AMT}>{carryAmount > 0 ? "+" : ""}{carryAmount.toLocaleString()}</span>
+          </>
+        )}
+      </div>
+
+      <div style={{ flex: 1, textAlign: "center", fontSize: 10, color: "#9ca3af" }}>
+        {zeroNet !== 0 && (
+          <>
+            보관금{" "}
+            <span style={AMT}>{zeroNet > 0 ? "+" : ""}{zeroNet.toLocaleString()}</span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+})()}
           </div>
 
 
