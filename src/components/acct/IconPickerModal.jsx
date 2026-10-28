@@ -6,8 +6,8 @@ import tags from "lucide-static/tags.json";
 import CATEGORY_DATA from "../../constants/lucideCategories.json";
 
 /* ════════════════════════════════════════
-   ① 탭 설정 — 순서와 한글 이름만 바꾸면 돼요
-   id = lucide 공식 카테고리 이름
+  ① 탭 설정 — 순서와 한글 이름만 바꾸면 돼요
+  id = lucide 공식 카테고리 이름
    ════════════════════════════════════════ */
 const TABS = [
   ["finance", "금융"],
@@ -90,7 +90,7 @@ function search(q, limit = 150) {
 /* ════════════════════════════════════════
    ③ 화면 — 건드릴 필요 없음
    ════════════════════════════════════════ */
-export default function IconPickerSheet({ selected, onSelect, onClose }) {
+export default function IconPickerModal({ selected, onSelect, onClose }) {
   const [cat, setCat] = useState(CATS[0].id);
   const [q, setQ] = useState("");
   const current = CATS.find((c) => c.id === cat) ?? CATS[0];

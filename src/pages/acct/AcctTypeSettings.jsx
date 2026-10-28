@@ -4,7 +4,7 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { fetchAcctCodes, fetchAcctBookCodes, insertAcctType, updateAcctType, deleteAcctType, countAcctEntriesByType } from "../../api/acctApi";
 import SvgIcon from "../../components/SvgIcon";
 
-const IconPickerSheet = lazy(() => import("../../components/acct/IconPickerSheet"));
+const IconPickerModal = lazy(() => import("../../components/acct/IconPickerModal"));
 
 const CODE_KEY = "code_cdid";
 const NAME_KEY = "code_cdnm";
@@ -192,7 +192,7 @@ function AcctTypeSettings({ book }) {
         {/* 아이콘 선택 하단 시트 (새 항목 / 기존 항목 공용) */}
         {picker && (
         <Suspense fallback={null}>
-            <IconPickerSheet
+            <IconPickerModal
             selected={picker === "new" ? iconName : ""}
             onSelect={(svg, name) => {
                 if (picker === "new") { setIcon(svg); setIconName(name); }

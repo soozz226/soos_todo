@@ -313,13 +313,13 @@ background: #fef2f2;
 .comment-author { font-size: 12px; font-weight: 600; color: #4a8ef5; margin-bottom: 4px; }
 .comment-text { font-size: 14px; color: #1e2a3a; line-height: 1.5; }
 
-/* Bottom sheet modal wrapper (DateEntryModal, RepeatItemModal, AlarmPicker, WinCheckModal, Calendar 공통) */
+/* Bottom sheet modal wrapper (CheckListModal, CheckListItemRepeatPicker, AlarmModal, WinCheckModal, Calendar 공통) */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: flex-end; justify-content: center; }
 .modal-sheet { background: #fff; border-radius: 20px 20px 0 0; width: 100%; max-width: 100%; box-shadow: 0 -8px 32px rgba(0,0,0,0.12); animation: slideUpSheet 0.25s ease-out; position: relative; }
 .modal-close { position: absolute; top: 16px; right: 16px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 18px; cursor: pointer; }
 .modal-handle { width: 36px; height: 4px; background: #e5e7eb; border-radius: 2px; margin: 0 auto 20px; }
 
-/* 구분(추첨/선착순/실패) 선택 pill — DateEntryModal, RepeatItemModal의 큰 선택 버튼.
+/* 구분(추첨/선착순/실패) 선택 pill — CheckListModal, CheckListItemRepeatPicker 큰 선택 버튼.
    .cl-entry-badge(체크리스트 항목 옆 작은 배지)와 색상은 공유하되 크기/용도가 달라 별도 클래스 사용 */
 .entry-type-option { flex: 1; text-align: center; padding: 10px 0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; background: #fff; color: #9ca3af; border: 1px dashed #d8dce8; }
 .entry-type-option.active { background: #eef0f4; color: #6b7280; border: 1px solid #e5e7eb; }
@@ -485,7 +485,7 @@ background: #fef2f2;
 
 /* ── 상세 화면: 자주 쓰는 문구 (내용 옆 버튼 + 선택 시트) ── */
 .acct-d-phrase-btn { flex-shrink: 0; padding: 6px 12px; border-radius: 100px; background: #f0f2f7; font-size: 13px; font-weight: 600; color: #6b7280; cursor: pointer; }
-/* 선택 시트: 달력 날짜 시트(AcctDaySheet)와 같은 모양 — 바탕은 .modal-overlay / .modal-sheet 재사용 */
+/* 선택 시트: 달력 날짜 시트(AcctDayModal)와 같은 모양 — 바탕은 .modal-overlay / .modal-sheet 재사용 */
 .acct-phrase-overlay { z-index: 200; }
 .acct-phrase-sheet { max-height: 78vh; overflow-y: auto; padding: 0; }
 .acct-phrase-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 18px 0; background: #f0f2f7; border-radius: 20px 20px 0 0; font-size: 15px; font-weight: 700; color: #1e2a3a; cursor: pointer; }

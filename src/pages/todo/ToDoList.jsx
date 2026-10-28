@@ -4,8 +4,8 @@ import { fetchAllChckItems, updateChckItem } from "../../api/todoApi";
 import { refreshNotifications } from "../../utils/notify";
 import { fmtDate as fmt, fmtDisplay } from "../../utils/dateUtils";
 import { entryBadgeClassName, entryBadgeText } from "../../constants/entryTypes";
+import { QuickNav } from "../../components/FloatingBtn";
 import Header from "../../components/Header";
-import QuickNav from "../../components/QuickNav";
 import WinCheckModal from "../../components/todo/WinCheckModal";
 import CalendarPicker from "../../components/CalendarPicker";
 

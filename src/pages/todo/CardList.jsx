@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { fetchToDoCards, fetchToDoStatusCodes, fetchToDoTagCodes, fetchToDoSubCodes } from "../../api/todoApi";
-import QuickNav from "../../components/QuickNav";
-import FloatingAddButton from "../../components/FloatingAddButton";
+import { QuickNav, QuickAdd } from "../../components/FloatingBtn";
 import Header from "../../components/Header";
 import SvgIcon from "../../components/SvgIcon";
 
@@ -264,7 +263,7 @@ return (
         <QuickNav current="cardlist" onNavigate={onQuickNav} />
 
         {/* 플로팅 + 버튼 */}
-        <FloatingAddButton onClick={() => onOpenCard()} />
+        <QuickAdd onClick={() => onOpenCard()} />
     </div>
 );
 }

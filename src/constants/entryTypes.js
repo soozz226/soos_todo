@@ -1,5 +1,5 @@
 // src/constants/entryTypes.js
-// DateEntryModal.jsx / RepeatItemModal.jsx에 중복 정의되어 있던 ENTRY_TYPE_OPTIONS를 통합.
+// CheckListModal.jsx / CheckListItemRepeatPicker.jsx에 중복 정의되어 있던 ENTRY_TYPE_OPTIONS를 통합.
 //
 // 색상은 인라인 스타일이 아니라 styles.jsx의 CSS 클래스를 사용합니다.
 // - 체크리스트 항목 옆 작은 배지: .cl-entry-badge (CardDetail.jsx가 이미 쓰던 클래스, 그대로 재사용)
@@ -36,7 +36,7 @@ export const entryBadgeText = (type, result) => `${type}${result === "O" ? "O" :
 
 /**
  * 구분 선택 모달의 큰 pill className.
- * 사용처: DateEntryModal.jsx, RepeatItemModal.jsx
+ * 사용처: CheckListModal.jsx, CheckListItemRepeatPicker.jsx
  */
 export const entryTypeOptionClassName = (id, active) =>
 `entry-type-option${active ? ` active${id ? ` ${entryTypeModifier(id)}` : ""}` : ""}`;

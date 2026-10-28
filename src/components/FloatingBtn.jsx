@@ -1,15 +1,18 @@
-// src/components/QuickNav.jsx
-// 왼쪽 아래 바로가기 버튼 — CardList / ToDoList / AccountBook 공통
-// 버튼 중심에서 12시 · 1시 반 · 3시 방향으로 메뉴 버튼이 펼쳐짐 (글자 없이 아이콘만)
-// 현재 화면 버튼은 모서리에 작은 체크 배지가 붙음
-// 색·크기·그림자는 FloatingAddButton.jsx(오른쪽 + 버튼)와 반드시 같게 유지
+// src/components/FloatingBtn.jsx
+// 화면 아래 떠 있는 동그란 버튼 모음
+//  - QuickNav : 왼쪽 아래 바로가기 버튼 (CardList / ToDoList / AccountBook 공통)
+//               버튼 중심에서 12시 · 1시 반 · 3시 방향으로 메뉴 버튼이 펼쳐짐 (글자 없이 아이콘만)
+//               현재 화면 버튼은 모서리에 작은 체크 배지가 붙음
+//  - QuickAdd : 오른쪽 아래 + 버튼 (CardList / AccountBook 공통)
+// 색·크기·그림자는 아래 상수를 같이 쓰므로 여기만 고치면 둘 다 바뀜
 import { useState } from "react";
-import { LayoutList, ListChecks, Wallet, LayoutGrid, X, Check } from "lucide-react";
+import { Plus, LayoutList, ListChecks, Wallet, LayoutGrid, X, Check } from "lucide-react";
 
 const COLOR = "#4a8ef5";                          // 파란색
 const SHADOW = "0 4px 12px rgba(74,142,245,0.4)"; // 파란 그림자
+const MAIN = 56;   // 큰 버튼 크기 (QuickNav 바로가기 버튼, QuickAdd 버튼 공통)
 
-const MAIN = 56;   // 바로가기 버튼 크기
+/* ────────────────── QuickNav (왼쪽 아래 바로가기) ────────────────── */
 const MINI = 44;   // 메뉴 버튼 크기
 const RADIUS = 76; // 버튼 중심에서 메뉴 버튼 중심까지 거리
 const LEFT = 24;   // 화면 왼쪽 여백
@@ -22,7 +25,7 @@ const ITEMS = [
 ];
 
 // current: 지금 보고 있는 화면 이름, onNavigate(name): 이동 함수, bottom: 버튼 아래 여백(px)
-function QuickNav({ current, onNavigate, bottom = 24 }) {
+export function QuickNav({ current, onNavigate, bottom = 24 }) {
   const [open, setOpen] = useState(false);
 
   const go = (name) => {
@@ -100,4 +103,20 @@ function QuickNav({ current, onNavigate, bottom = 24 }) {
   );
 }
 
-export default QuickNav;
+/* ────────────────── QuickAdd (오른쪽 아래 + 버튼) ────────────────── */
+export function QuickAdd({ onClick, bottom = 24 }) {
+  return (
+    <div
+      onClick={onClick}
+      aria-label="추가"
+      style={{
+        position: "fixed", right: 24, bottom, width: MAIN, height: MAIN, borderRadius: "50%",
+        background: COLOR, color: "#fff", display: "flex",
+        alignItems: "center", justifyContent: "center", cursor: "pointer",
+        boxShadow: SHADOW, zIndex: 10,
+      }}
+    >
+      <Plus size={24} strokeWidth={2.2} />
+    </div>
+  );
+}

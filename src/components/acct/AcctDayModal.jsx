@@ -1,8 +1,9 @@
 import { useState } from "react";
-import YearMonthPickerModal from "../YearMonthPickerModal";
+import { YearMonthPickerModal } from "../CalendarPicker";
 import SvgIcon from "../SvgIcon";
 
-function AcctDaySheet({ date, title, entries, onClose, onAdd, onEditEntry, resolveType, onBulkMove }) {
+// 가계부 상세내역 팝업
+function AcctDayModal({ date, title, entries, onClose, onAdd, onEditEntry, resolveType, onBulkMove }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   if (!date) return null;
 
@@ -153,17 +154,15 @@ function AcctDaySheet({ date, title, entries, onClose, onAdd, onEditEntry, resol
     </div>
 
     {pickerOpen && (
-      <div style={{ position: "relative", zIndex: 300 }}>
-        <YearMonthPickerModal
-          initialYear={nextMonth.getFullYear()}
-          initialMonth={nextMonth.getMonth()}
-          onClose={() => setPickerOpen(false)}
-          onConfirm={handleBulkConfirm}
-        />
-      </div>
+      <YearMonthPickerModal
+        initialYear={nextMonth.getFullYear()}
+        initialMonth={nextMonth.getMonth()}
+        onClose={() => setPickerOpen(false)}
+        onConfirm={handleBulkConfirm}
+      />
     )}
     </>
   );
 }
 
-export default AcctDaySheet;
+export default AcctDayModal;

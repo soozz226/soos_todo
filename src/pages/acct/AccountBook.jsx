@@ -4,11 +4,11 @@ import { useFetch } from "../../hooks/useFetch";
 import { fetchAcctEntries, fetchAcctEntriesRange, fetchAcctBookCodes, fetchAcctCodes, moveAcctEntries,
   insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCarryBase } from "../../api/acctApi";
 import { fmtDate } from "../../utils/dateUtils";
-import YearMonthPickerModal from "../../components/YearMonthPickerModal";
-import AcctDaySheet from "../../components/acct/AcctDaySheet";
-import QuickNav from "../../components/QuickNav";
-import FloatingAddButton from "../../components/FloatingAddButton";
-import AcctCarrySheet from "../../components/acct/AcctCarrySheet";
+import { QuickNav, QuickAdd } from "../../components/FloatingBtn";
+import { YearMonthPickerModal } from "../../components/CalendarPicker";
+import AcctDayModal from "../../components/acct/AcctDayModal";
+
+import AcctCarryModal from "../../components/acct/AcctCarryModal";
 
 const TYPE_FLAG = { A001: "B", A002: "C" }; // 수입: B, 지출: C
 const BOOK_KEY = "acct_selected_book";
@@ -469,7 +469,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
       <QuickNav current="acctbook" onNavigate={onQuickNav} />
 
       {/* 플로팅 + 버튼 */}
-      <FloatingAddButton onClick={() => openEntry(selectedDate)} />
+      <QuickAdd onClick={() => openEntry(selectedDate)} />
 
       {isYearMonthOpen && (
         <YearMonthPickerModal
@@ -481,7 +481,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
       )}
 
       {/* 날짜 선택 시트 */}
-      <AcctDaySheet
+      <AcctDayModal
         date={selectedDate}
         entries={selectedDate ? (entriesByDate[selectedDate] || []) : []}
         resolveType={resolveType}
@@ -491,7 +491,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
       />
 
       {/* 보관금 시트 */}
-      <AcctDaySheet
+      <AcctDayModal
         date={isZeroOpen ? zeroDate : null}
         title="보관금"
         entries={isZeroOpen ? zeroEntries : []}
@@ -502,7 +502,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
         onEditEntry={(entry) => openEntry(zeroDate, entry, true)}
       />
 
-      <AcctCarrySheet
+      <AcctCarryModal
         open={isCarryOpen}
         year={calYear}
         month={calMonth}

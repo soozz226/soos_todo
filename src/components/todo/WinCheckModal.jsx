@@ -1,6 +1,4 @@
-// src/components/WinCheckModal.jsx
-// 다른 4개 모달(DateEntryModal, RepeatItemModal, AlarmPicker)과 동일하게
-// 우측상단 ✕ 닫기 버튼 패턴으로 통일 (기존엔 OverdueList판=손잡이바만, ToDoList판=✕만 있어서 서로 달랐음)
+// 카드 구분값있는 내역 체크 시 결과 팝업
 function WinCheckModal({ item, onClose, onConfirm }) {
     return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 250 }}>

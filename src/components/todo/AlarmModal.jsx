@@ -3,7 +3,9 @@ import { useState } from "react";
 import { fmtDate } from "../../utils/dateUtils";
 import { WEEK_LABELS } from "../../constants/entryTypes";
 import { alarmSummary } from "../../utils/alarmUtils";
+import AlarmRepeatPicker from "./AlarmRepeatPicker";
 
+// 카드 디테일화면 알람설정 팝업
 const REPEAT_OPTIONS = [
 { id: "none", label: "한 번" },
 { id: "day", label: "매일" },
@@ -39,7 +41,7 @@ alrm_end: a.alrm_end || "",
 alrm_intv: a.alrm_intv || 1,
 });
 
-function AlarmPicker({ todoName, alarms, onChange, onClose }) {
+function AlarmModal({ todoName, alarms, onChange, onClose }) {
 const [draft, setDraft] = useState(null); // null이면 목록 화면, 값이 있으면 추가/수정 화면
 
 const patch = (p) => setDraft((d) => ({ ...d, ...p }));
@@ -49,7 +51,6 @@ patch({ alrm_days: draft.alrm_days.includes(i) ? draft.alrm_days.filter((d) => d
 const canSave =
 draft &&
 draft.alrm_date && draft.alrm_time &&
-(draft.alrm_rpt !== "week" || draft.alrm_days.length > 0) &&
 (!draft.alrm_end || draft.alrm_end >= draft.alrm_date);
 
 const saveDraft = () => {
@@ -132,72 +133,25 @@ style={{ padding: "20px 24px 40px", maxHeight: "90vh", overflowY: "auto" }}
         </div>
     </div>
 
-    <div style={{ marginBottom: 16 }}>
-        <div style={labelStyle}>반복</div>
-        <div style={{ display: "flex", gap: 8 }}>
-        {REPEAT_OPTIONS.map((o) => (
-            <div
-            key={o.id}
-            onClick={() => patch({ alrm_rpt: o.id, alrm_intv: 1 })}
-            style={{
-                flex: 1, textAlign: "center", padding: "9px 0", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer",
-                background: draft.alrm_rpt === o.id ? "#4a8ef5" : "#f0f2f7",
-                color: draft.alrm_rpt === o.id ? "#fff" : "#6b7280",
-            }}
-            >
-            {o.label}
-            </div>
-        ))}
-        </div>
-    </div>
+    <AlarmRepeatPicker
+        options={["none", "day", "week", "month", "year"]}
+        type={draft.alrm_rpt}
+        interval={draft.alrm_intv}
+        weekDays={draft.alrm_days}
+        startDate={draft.alrm_date}
+        onType={(id) => patch({ alrm_rpt: id, alrm_intv: 1 })}
+        onInterval={(n) => patch({ alrm_intv: n })}
+        onToggleDay={toggleDay}
+    />
 
     {draft.alrm_rpt !== "none" && (
-        <>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <input
-            type="number" min="1" max="99" value={draft.alrm_intv}
-            onChange={(e) => patch({ alrm_intv: Math.max(1, Number(e.target.value) || 1) })}
-            style={{ ...inputStyle, width: 72, padding: "10px 12px", fontWeight: 700, textAlign: "center" }}
-            />
-            <span style={{ fontSize: 15, color: "#6b7280" }}>{UNIT[draft.alrm_rpt]}</span>
-        </div>
-
-        {draft.alrm_rpt === "week" && (
-            <div style={{ marginBottom: 16 }}>
-            <div style={labelStyle}>요일 선택</div>
-            <div style={{ display: "flex", gap: 6 }}>
-                {WEEK_LABELS.map((lbl, i) => {
-                const on = draft.alrm_days.includes(i);
-                return (
-                    <div
-                    key={i} onClick={() => toggleDay(i)}
-                    style={{
-                        flex: 1, textAlign: "center", padding: "9px 0", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer",
-                        background: on ? "#eef3ff" : "#f0f2f7",
-                        color: on ? "#4a8ef5" : i === 0 ? "#ef4444" : "#9ca3af",
-                        border: on ? "2px solid #4a8ef5" : "2px solid transparent",
-                    }}
-                    >
-                    {lbl}
-                    </div>
-                );
-                })}
-            </div>
-            </div>
-        )}
-
-        {draft.alrm_rpt === "month" && (
-            <div style={{ fontSize: 12, color: "#9ca3af", marginBottom: 16 }}>
-            시작일의 날짜({draft.alrm_date ? Number(draft.alrm_date.slice(8, 10)) : "-"}일)에 울려요. 그 달에 없는 날이면 말일에 울려요.
-            </div>
-        )}
-
         <div style={{ marginBottom: 16 }}>
             <div style={labelStyle}>종료일 <span style={{ fontWeight: 400, color: "#c4c9d4" }}>(선택, 비우면 계속 반복)</span></div>
             <input type="date" value={draft.alrm_end} min={draft.alrm_date} onChange={(e) => patch({ alrm_end: e.target.value })} style={inputStyle} />
         </div>
-        </>
     )}
+
+    
 
     <div style={{ marginBottom: 20 }}>
         <div style={labelStyle}>알림 메시지 <span style={{ fontWeight: 400, color: "#c4c9d4" }}>(선택)</span></div>
@@ -235,4 +189,4 @@ style={{ padding: "20px 24px 40px", maxHeight: "90vh", overflowY: "auto" }}
 );
 }
 
-export default AlarmPicker;
+export default AlarmModal;

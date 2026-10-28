@@ -1,10 +1,11 @@
-// src/components/DateEntryModal.jsx
+
 import { useState } from "react";
 import { fmtDate, parseDate } from "../../utils/dateUtils";
 import CalendarPicker from "../CalendarPicker";
 import { ENTRY_TYPE_OPTIONS, entryTypeOptionClassName } from "../../constants/entryTypes";
 
-function DateEntryModal({ initialDate, initialEntryType, initialWon, onClose, onConfirm }) {
+// 카드 디테일화면 체크리스트 일자선택 상세팝업(날짜,구분)
+function CheckListModal({ initialDate, initialEntryType, initialWon, onClose, onConfirm }) {
     const [selectedDate, setSelectedDate] = useState(initialDate || "");
     const [entryType, setEntryType] = useState(initialEntryType || null);
     const [won, setWon] = useState(initialWon ?? null);
@@ -95,4 +96,4 @@ function DateEntryModal({ initialDate, initialEntryType, initialWon, onClose, on
     );
 }
 
-export default DateEntryModal;
+export default CheckListModal;

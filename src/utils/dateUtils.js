@@ -1,9 +1,4 @@
-// src/utils/dateUtils.js
-// OverdueList.jsx의 fmt, ToDoList.jsx의 fmt, DateEntryModal.jsx/RepeatItemModal.jsx의
-// fmtDate가 전부 동일한 "yyyy-mm-dd" 변환 로직이라 하나로 통합.
-// RepeatItemModal.jsx의 parseDate도 함께 이동.
 
-/** Date 객체 -> "yyyy-mm-dd" 문자열 */
 export const fmtDate = (date) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -40,3 +35,46 @@ export const buildWeeks = (year, month) => {
     }
     return weeks;
 };
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export function expandRepeat({ type, start, end, interval = 1, weekDays = [] }) {
+    if (!start || !end || start > end) return [];
+    const n = Math.max(1, interval || 1);
+    const dates = [];
+
+    if (type === "day") {
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + n)) dates.push(new Date(d));
+    } else if (type === "week") {
+        const days = weekDays.length ? weekDays : [start.getDay()];
+        const weekStart = new Date(start);
+        weekStart.setDate(start.getDate() - start.getDay());
+
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            if (!days.includes(d.getDay())) continue;
+            const weekIdx = Math.floor(Math.round((d - weekStart) / DAY_MS) / 7);
+            if (weekIdx % n === 0) dates.push(new Date(d));
+        }
+    } else if (type === "month") {
+        let cur = new Date(start.getFullYear(), start.getMonth(), 1);
+
+        for (let i = 0; i < 1200 && cur <= end; i++) {
+            const last = new Date(cur.getFullYear(), cur.getMonth() + 1, 0).getDate();
+            const target = new Date(cur.getFullYear(), cur.getMonth(), Math.min(start.getDate(), last));
+            if (target >= start && target <= end) dates.push(target);
+            cur = new Date(cur.getFullYear(), cur.getMonth() + n, 1);
+        }
+    } else if (type === "year") {
+        let year = start.getFullYear();
+
+        for (let i = 0; i < 100; i++) {
+            const last = new Date(year, start.getMonth() + 1, 0).getDate();
+            const target = new Date(year, start.getMonth(), Math.min(start.getDate(), last));
+            if (target > end) break;
+            if (target >= start) dates.push(target);
+            year += n;
+        }
+    }
+
+    return dates;
+}

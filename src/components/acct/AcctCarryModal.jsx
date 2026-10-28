@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
-function AcctCarrySheet({ open, year, month, autoAmount, autoError, confirmedAmount, saving, onConfirm, onUnconfirm, onClose }) {
+// 가계부 이월잔액 확정 팝업
+function AcctCarryModal({ open, year, month, autoAmount, autoError, confirmedAmount, saving, onConfirm, onUnconfirm, onClose }) {
     const [digits, setDigits] = useState("");
     const [neg, setNeg] = useState(false);
     const [touched, setTouched] = useState(false); // 직접 고치기 시작하면 자동값으로 덮어쓰지 않음
@@ -77,4 +78,4 @@ function AcctCarrySheet({ open, year, month, autoAmount, autoError, confirmedAmo
     );
 }
 
-export default AcctCarrySheet;
+export default AcctCarryModal;

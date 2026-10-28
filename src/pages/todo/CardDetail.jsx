@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useFetch } from "../../hooks/useFetch";
 import { fetchAcctBookCodes, fetchAcctEntriesByTodo } from "../../api/acctApi";
-import DateEntryModal from "../../components/todo/DateEntryModal";
-import RepeatItemModal from "../../components/todo/RepeatItemModal";
+import CheckListModal from "../../components/todo/CheckListModal";
+import CheckListItemRepeatPicker from "../../components/todo/CheckListItemRepeatPicker";
 import SvgIcon from "../../components/SvgIcon";
 
 import {
@@ -22,7 +22,7 @@ import {
     saveTodoAlarm,
 } from "../../api/todoApi";
 
-import AlarmPicker from "../../components/todo/AlarmPicker";
+import AlarmModal from "../../components/todo/AlarmModal";
 
 const emptyCard = {
 todo_uuid: null,
@@ -893,7 +893,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     {(localCard.todo_alrm?.length ?? 0) > 0 ? `Alert · ${localCard.todo_alrm.length}개` : "Alert"}
                 </div>
                 {openDropdown === "alarm" && (
-                    <AlarmPicker
+                    <AlarmModal
                         todoName={localCard.todo_name}
                         alarms={localCard.todo_alrm || []}
                         onChange={(list) => handleChange("todo_alrm", list)}
@@ -1197,7 +1197,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
             </div>
 
             {repeatModalTarget && (
-                <RepeatItemModal
+                <CheckListItemRepeatPicker
                     onClose={() => setRepeatModalTarget(null)}
                     onConfirm={handleRepeatConfirm}
                 />
@@ -1205,7 +1205,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
 
             {/* 날짜 선택 모달 */}
             {dateModalTarget && (
-            <DateEntryModal
+            <CheckListModal
                 initialDate={
                 localCard.todo_chck
                     .find((g) => g.chck_uuid === dateModalTarget.gid)
