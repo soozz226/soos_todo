@@ -30,18 +30,6 @@ export function alarmSummary(a) {
     return `${rule} ${time} (${range})`;
 }
 
-/**
- * 공용 반복 날짜 계산 (알림 / 반복 아이템이 같이 씀) — 모두 시작일 기준
- *  - type     : "day" | "week" | "month" | "year"
- *  - start,end: Date (end 포함)
- *  - interval : N일/주/개월/년마다
- *  - weekDays : 매주일 때 요일 [0~6] (비어 있으면 시작일의 요일)
- *  매월 = 시작일의 날짜, 매년 = 시작일의 월·일 (그 달에 없는 날이면 말일)
- * 돌려주는 값: Date 배열
- */
-
-
-/** from(지금) 이후 ~ to 사이에 울려야 하는 시각들을 Date 배열로 돌려줌 */
 export function expandAlarm(a, from, to) {
     const start = parseDate(a.alrm_date);
     const end = a.alrm_end ? parseDate(a.alrm_end) : null;

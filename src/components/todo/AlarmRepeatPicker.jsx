@@ -1,4 +1,3 @@
-// src/components/todo/RepeatRuleFields.jsx
 // 반복 규칙 입력 화면 (반복 종류 / N마다 / 요일) — AlarmModal, CheckListItemRepeatPicker 공용
 // options 로 보여줄 종류를 고름: "none"(한 번) "day" "week" "month" "year"
 import { WEEK_LABELS } from "../../constants/entryTypes";

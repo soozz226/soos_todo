@@ -130,7 +130,7 @@ function AcctTypeSettings({ book }) {
             className={`acct-pm-iconbtn ${icon ? "has" : ""}`}
             onClick={() => setPicker("new")}
         >
-            {t.code_icon ? <span dangerouslySetInnerHTML={{ __html: t.code_icon }} /> : "＋"}
+            {icon ? <SvgIcon icon={icon} /> : "＋"}
         </button>
         <input
             className="acct-pm-input"

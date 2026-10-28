@@ -192,10 +192,14 @@ export async function countAcctEntriesByBook(book) {
 
 
 // 항목 추가
-export async function insertAcctType({ flag, name, ordr, root }) {
+export async function insertAcctType({ flag, name, ordr, book, icon }) {
     const { data, error } = await supabase
         .from("acct_code")
-        .insert({ code_flag: flag, code_cdnm: name, code_ordr: ordr, code_root: root ?? null })
+        .insert({
+            code_flag: flag, code_cdnm: name, code_ordr: ordr,
+            code_root: book ? [book] : null,
+            code_icon: icon || null,
+        })
         .select()
         .single();
     if (error) throw error;

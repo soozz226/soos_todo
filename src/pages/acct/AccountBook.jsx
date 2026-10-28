@@ -3,12 +3,13 @@ import { useState, useRef, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
 import { fetchAcctEntries, fetchAcctEntriesRange, fetchAcctBookCodes, fetchAcctCodes, moveAcctEntries,
   insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCarryBase } from "../../api/acctApi";
-import { fmtDate } from "../../utils/dateUtils";
+import { fmtDate, buildWeeks } from "../../utils/dateUtils";
+import { WEEK_LABELS } from "../../constants/entryTypes";
 import { QuickNav, QuickAdd } from "../../components/FloatingBtn";
 import { YearMonthPickerModal } from "../../components/CalendarPicker";
 import AcctDayModal from "../../components/acct/AcctDayModal";
-
 import AcctCarryModal from "../../components/acct/AcctCarryModal";
+import SvgIcon from "../../components/SvgIcon";
 
 const TYPE_FLAG = { A001: "B", A002: "C" }; // 수입: B, 지출: C
 const BOOK_KEY = "acct_selected_book";
@@ -34,7 +35,6 @@ const TABS = [
   { id: "ledger", label: "가계부" },
 ];
 
-const WEEK_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
 const MONTHS_NUM = (m) => `${m + 1}월`;
 
 function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
@@ -108,9 +108,10 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
     onOpenEntry && onOpenEntry(date, entry, book, typeCodes, zero);
 
   // 달력 6주 그리드의 시작/끝 날짜 (이전/다음 달 칸 포함)
-  const gridStartDate = new Date(calYear, calMonth, 1 - new Date(calYear, calMonth, 1).getDay());
-  const gridEndDate = new Date(gridStartDate.getFullYear(), gridStartDate.getMonth(), gridStartDate.getDate() + 41);
-
+  const weeks = buildWeeks(calYear, calMonth);
+  const gridStartDate = weeks[0][0];
+  const gridEndDate = weeks[5][6];
+  
   const { data: entries, reload: sync } = useFetch(() =>
     fetchAcctEntriesRange(fmtDate(gridStartDate), fmtDate(gridEndDate), book), [calYear, calMonth, book], "acct-entries"
   );
@@ -171,22 +172,6 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
     }
   };
   
-  // 6주 그리드 (이전달/다음달 날짜 포함, 스크린샷처럼)
-  const firstOfMonth = new Date(calYear, calMonth, 1);
-  const startOffset = firstOfMonth.getDay(); // 이번달 1일이 무슨 요일인지
-  const gridStart = new Date(calYear, calMonth, 1 - startOffset);
-
-  const weeks = [];
-  let cursor = new Date(gridStart);
-  for (let w = 0; w < 6; w++) {
-    const week = [];
-    for (let d = 0; d < 7; d++) {
-      week.push(new Date(cursor));
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    weeks.push(week);
-  }
-
   const goPrevMonth = () => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else setCalMonth(m => m - 1); };
   const goNextMonth = () => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else setCalMonth(m => m + 1); };
 
@@ -240,10 +225,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
         onClick={() => onOpenSettings && onOpenSettings(book)}
         style={{ marginLeft: "auto", marginRight: -8 }}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-        </svg>
+        <SvgIcon.Settings />
       </div>
     </div>
 <div style={{ height: 1, background: "#e5e7eb" }} />
@@ -455,9 +437,7 @@ function AccountBook({ onBack, onOpenEntry, onOpenSettings, onQuickNav }) {
                   </div>
                   <div className="acct-book-name">{name}</div>
                   {selected && (
-                    <svg className="acct-book-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="5 12.5 10 17.5 19 7.5" />
-                    </svg>
+                    <SvgIcon.BoxCheck />
                   )}
                 </div>
               );

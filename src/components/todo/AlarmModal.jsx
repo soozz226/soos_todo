@@ -1,18 +1,8 @@
 
 import { useState } from "react";
 import { fmtDate } from "../../utils/dateUtils";
-import { WEEK_LABELS } from "../../constants/entryTypes";
 import { alarmSummary } from "../../utils/alarmUtils";
 import AlarmRepeatPicker from "./AlarmRepeatPicker";
-
-// 카드 디테일화면 알람설정 팝업
-const REPEAT_OPTIONS = [
-{ id: "none", label: "한 번" },
-{ id: "day", label: "매일" },
-{ id: "week", label: "매주" },
-{ id: "month", label: "매월" },
-];
-const UNIT = { day: "일마다", week: "주마다", month: "개월마다" };
 
 const inputStyle = {
 width: "100%", border: "1.5px solid #dde1ea", borderRadius: 12,
