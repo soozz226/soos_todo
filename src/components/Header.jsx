@@ -1,4 +1,4 @@
-import Ico from "../etc/icons";
+import SvgIcon from "./SvgIcon";
 
 function Header({ title, titleExtra, user, onBack, isSyncing, onSync, children }) {
   return (
@@ -17,7 +17,7 @@ function Header({ title, titleExtra, user, onBack, isSyncing, onSync, children }
           onClick={() => !isSyncing && onSync()}
           title="동기화"
         >
-          <Ico.Sync />
+          <SvgIcon.Sync />
         </div>
       )}
       {children}

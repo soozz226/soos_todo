@@ -1,8 +1,5 @@
-// src/pages/AcctPhraseSettings.jsx
-// 자주 쓰는 문구 추가/삭제 패널 (acct_code 의 code_flag = 'D') — AcctSettings 의 탭 안에 표시됨
-// 맨 위에서 가계부를 고르면, 그 가계부의 문구(전용 + 공통)만 보이고 새 문구도 그 가계부에 저장됨
 import { useState, useEffect } from "react";
-import { fetchAcctCodes, fetchAcctBookCodes, insertAcctPhrase, deleteAcctPhrase } from "../api/acctApi";
+import { fetchAcctCodes, fetchAcctBookCodes, insertAcctPhrase, deleteAcctPhrase } from "../../api/acctApi";
 
 const CODE_KEY = "code_cdid";
 const NAME_KEY = "code_cdnm";

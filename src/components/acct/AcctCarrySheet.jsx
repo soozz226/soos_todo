@@ -1,7 +1,3 @@
-// src/components/AcctCarrySheet.jsx
-// 이월 총잔액 확정 시트
-// autoAmount: 이전 달까지 자동 계산한 값 (null 이면 계산 중), autoError: 자동 계산 실패 여부
-// confirmedAmount: 이미 확정된 값 (없으면 null)
 import { useState, useEffect } from "react";
 
 function AcctCarrySheet({ open, year, month, autoAmount, autoError, confirmedAmount, saving, onConfirm, onUnconfirm, onClose }) {

@@ -1,10 +1,9 @@
-// src/components/IconPickerSheet.jsx
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { renderToStaticMarkup } from "react-dom/server";
 import { icons } from "lucide-react";
 import tags from "lucide-static/tags.json";
-import CATEGORY_DATA from "../constants/lucideCategories.json";
+import CATEGORY_DATA from "../../constants/lucideCategories.json";
 
 /* ════════════════════════════════════════
    ① 탭 설정 — 순서와 한글 이름만 바꾸면 돼요

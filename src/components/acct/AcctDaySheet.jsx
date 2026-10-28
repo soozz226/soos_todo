@@ -1,9 +1,7 @@
-// src/components/AcctDaySheet.jsx
 import { useState } from "react";
-import YearMonthPickerModal from "./YearMonthPickerModal";
-// resolveType(entry) → { name, icon } | undefined  (AccountBook 에서 acct_code 로 찾아서 넘겨줌)
-// title 이 있으면 날짜/요일 대신 그 제목을 보여줌 (예: 보관금)
-// onBulkMove(year, month) 가 있고 title 이 있으면 제목 옆에 [일괄전송] 버튼을 보여줌 (month 는 0부터)
+import YearMonthPickerModal from "../YearMonthPickerModal";
+import SvgIcon from "../SvgIcon";
+
 function AcctDaySheet({ date, title, entries, onClose, onAdd, onEditEntry, resolveType, onBulkMove }) {
   const [pickerOpen, setPickerOpen] = useState(false);
   if (!date) return null;
@@ -122,7 +120,7 @@ function AcctDaySheet({ date, title, entries, onClose, onAdd, onEditEntry, resol
                     fontSize: 16, fontWeight: 700,
                   }}>
                     {type?.icon ? (
-                      <span className="acct-ds-icon" dangerouslySetInnerHTML={{ __html: type.icon }} />
+                      <SvgIcon icon={type.icon} className="acct-ds-icon" />
                     ) : (
                       typeName.slice(0, 1)
                     )}

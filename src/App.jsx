@@ -1,19 +1,25 @@
 import { useEffect, useState } from 'react'
-import Login from './pages/Login'
 import { supabase } from './lib/supabaseClient'
-import styles from "./etc/styles";
-import Welcome from './pages/Welcome'
-import CardList from './pages/CardList'
-import CardDetail from './pages/CardDetail'
-import ToDoList from './pages/ToDoList'
-import AccountBook from './pages/AccountBook'
-import OverdueList from './pages/OverdueList'
 import { useUser } from './context/UserContext'
 import { useNav } from './hooks/useNav'
-import AccountBookDetail from './pages/AccountBookDetail'
-import AcctSettings from './pages/AcctSettings'
-import AcctBookSettings from './pages/AcctBookSettings'
-import AcctPhraseSettings from './pages/AcctPhraseSettings'
+
+import Login from './pages/Login'
+import styles from "./etc/styles";
+
+import Welcome from './pages/Welcome'
+
+import CardList from './pages/todo/CardList'
+import CardDetail from './pages/todo/CardDetail'
+import ToDoList from './pages/todo/ToDoList'
+import OverdueList from './pages/todo/OverdueList'
+
+import AccountBook from './pages/acct/AccountBook'
+import AccountBookDetail from './pages/acct/AccountBookDetail'
+import AcctSettings from './pages/acct/AcctSettings'
+import AcctBookSettings from './pages/acct/AcctBookSettings'
+import AcctPhraseSettings from './pages/acct/AcctPhraseSettings'
+
+
 import { CapacitorShareTarget } from '@capgo/capacitor-share-target'
 import { App as CapApp } from '@capacitor/app'
 import { refreshNotifications } from './utils/notify'
@@ -68,7 +74,7 @@ function App() {
       </>
     );
   }
-  
+
   return (
     <>
       <style>{styles}</style>

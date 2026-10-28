@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { fmtDate, parseDate } from "../utils/dateUtils";
-import CalendarPicker from "../components/CalendarPicker";
-import { insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCodes } from "../api/acctApi";
+import { fmtDate, parseDate } from "../../utils/dateUtils";
+import { insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCodes } from "../../api/acctApi";
+import CalendarPicker from "../../components/CalendarPicker";
 import AcctPhraseSettings from "./AcctPhraseSettings"; // 설정 화면의 문구 탭과 같은 컴포넌트
+import SvgIcon from "../../components/SvgIcon";
 
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -18,7 +19,7 @@ const PHRASE_FLAG = "D";            // 자주 쓰는 문구가 들어 있는 acc
 // 테이블의 아이콘 값(SVG 마크업)을 그대로 그림. 비어 있으면 이름 첫 글자
 function TypeIcon({ icon, name }) {
   if (!icon) return <span>{name.slice(0, 1)}</span>;
-  return <span className="acct-d-type-icon" dangerouslySetInnerHTML={{ __html: icon }} />;
+  return <SvgIcon icon={icon} className="acct-d-type-icon" />;
 }
 
 function formatDateLabel(str) {

@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { useFetch } from "../hooks/useFetch";
-import { fetchToDoCards, fetchToDoStatusCodes, fetchToDoTagCodes, fetchToDoSubCodes } from "../api/todoApi";
-import QuickNav from "../components/QuickNav";
-import FloatingAddButton from "../components/FloatingAddButton";
-import Ico from "../etc/icons";
-import Header from "../components/Header";
+import { useFetch } from "../../hooks/useFetch";
+import { fetchToDoCards, fetchToDoStatusCodes, fetchToDoTagCodes, fetchToDoSubCodes } from "../../api/todoApi";
+import QuickNav from "../../components/QuickNav";
+import FloatingAddButton from "../../components/FloatingAddButton";
+import Header from "../../components/Header";
+import SvgIcon from "../../components/SvgIcon";
 
-/* TAG/SUB 드롭다운에서 완전히 동일하게 복붙되어 있던 "전체 + 목록" pill 그리드.
-   활성 상태 색상만 다르게 넘겨받아 하나의 컴포넌트로 통합.
-   colorFor(item)는 "전체" pill에 대해서는 item=null로 호출됨 */
 function FilterPillGrid({ items, activeKey, colorFor, onSelect }) {
     return (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))", gap: 6 }}>
@@ -60,7 +57,6 @@ function CardList({ onBack, onUser, onOpenCard, onQuickNav }) {
     const [activeStatus, setActiveStatus] = useState("A001"); //Backlog
     const { data: status } = useFetch(fetchToDoStatusCodes, [], "todo-status");
     const activeStatusInfo = status.find((s) => s.code_cdid === activeStatus);
-    const IconComponent = Ico[activeStatusInfo?.code_cdnm];
 
     const countBy = (statusId) => {
         if (statusId === "all") return cards.length;
@@ -136,7 +132,7 @@ return (
             <div className="column" style={{ paddingBottom: 96 }}>
             <div className="col-hdr">
                 <span className="col-ico" style={{ color: activeStatusInfo?.code_bgcl }}>
-                {IconComponent && <IconComponent />}
+                <SvgIcon icon={activeStatusInfo?.code_icon} />
                 </span>
 
                 <span className="col-lbl">
@@ -151,7 +147,7 @@ return (
                 <div className="filter-row">
                     {/* 검색 */}
                     <div className="filter-search-btn" onClick={toggleSearch}>
-                        <Ico.Search/>
+                        <SvgIcon.Search/>
                     </div>
                 </div>
             </div>
@@ -160,7 +156,7 @@ return (
             <div className="search-bar" style={{ overflow: "visible" }}>
                 <div className="search-bar-inner" style={{ overflow: "visible" }}>
                 <span className="search-bar-icon">
-                    <Ico.Search />
+                    <SvgIcon.Search />
                 </span>
                 <input
                     type="text"
@@ -256,7 +252,7 @@ return (
 
                     {s.todo_chckt > 0 && (
                     <div className="card-progress">
-                        <Ico.Check />
+                        <SvgIcon.Check />
                         {s.todo_chckd}/{s.todo_chckt}
                     </div>
                     )}

@@ -1,7 +1,7 @@
 // src/components/RepeatItemModal.jsx
 import { useState, useMemo } from "react";
-import { fmtDate, parseDate } from "../utils/dateUtils";
-import { ENTRY_TYPE_OPTIONS, MONTHS, WEEK_LABELS, entryTypeOptionClassName } from "../constants/entryTypes";
+import { fmtDate, parseDate } from "../../utils/dateUtils";
+import { ENTRY_TYPE_OPTIONS, MONTHS, WEEK_LABELS, entryTypeOptionClassName } from "../../constants/entryTypes";
 
 const REPEAT_TYPES = [
 { id: "day", label: "매일" },

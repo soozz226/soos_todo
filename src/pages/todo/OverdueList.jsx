@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useFetch } from "../hooks/useFetch";
-import { fetchAllChckItems, updateChckItem } from "../api/todoApi";
-import Header from "../components/Header";
-import WinCheckModal from "../components/WinCheckModal";
-import { fmtDate as fmt } from "../utils/dateUtils";
-import { entryBadgeClassName, entryBadgeText } from "../constants/entryTypes";
+import { useFetch } from "../../hooks/useFetch";
+import { fetchAllChckItems, updateChckItem } from "../../api/todoApi";
+import { fmtDate as fmt } from "../../utils/dateUtils";
+import { entryBadgeClassName, entryBadgeText } from "../../constants/entryTypes";
+import Header from "../../components/Header";
+import WinCheckModal from "../../components/todo/WinCheckModal";
 
 function OverdueScreen({ onBack, onOpenCard, onUser }) {
   const { data: cards, loading, reload: sync } = useFetch(fetchAllChckItems);

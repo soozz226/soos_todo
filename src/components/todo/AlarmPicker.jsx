@@ -1,10 +1,8 @@
-// src/components/AlarmPicker.jsx
-// 카드 알림 여러 개 관리 시트 — 목록 / 추가 / 수정 / 삭제
-// alarms: 현재 카드의 알림 배열, onChange(newList): 바뀐 목록을 부모(CardDetail)에 전달
+
 import { useState } from "react";
-import { fmtDate } from "../utils/dateUtils";
-import { WEEK_LABELS } from "../constants/entryTypes";
-import { alarmSummary } from "../utils/alarmUtils";
+import { fmtDate } from "../../utils/dateUtils";
+import { WEEK_LABELS } from "../../constants/entryTypes";
+import { alarmSummary } from "../../utils/alarmUtils";
 
 const REPEAT_OPTIONS = [
 { id: "none", label: "한 번" },

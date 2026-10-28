@@ -1,8 +1,8 @@
 // src/components/DateEntryModal.jsx
 import { useState } from "react";
-import { fmtDate, parseDate } from "../utils/dateUtils";
-import CalendarPicker from "./CalendarPicker";
-import { ENTRY_TYPE_OPTIONS, entryTypeOptionClassName } from "../constants/entryTypes";
+import { fmtDate, parseDate } from "../../utils/dateUtils";
+import CalendarPicker from "../CalendarPicker";
+import { ENTRY_TYPE_OPTIONS, entryTypeOptionClassName } from "../../constants/entryTypes";
 
 function DateEntryModal({ initialDate, initialEntryType, initialWon, onClose, onConfirm }) {
     const [selectedDate, setSelectedDate] = useState(initialDate || "");

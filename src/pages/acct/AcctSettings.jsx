@@ -5,6 +5,7 @@ import AcctBookSettings from "./AcctBookSettings";
 import AcctTypeSettings from "./AcctTypeSettings";
 import AcctPhraseSettings from "./AcctPhraseSettings";
 
+
 function AcctSettings({ book, onBack }) {
     const TABS = [
     { id: "books", label: "가계부", panel: <AcctBookSettings /> },

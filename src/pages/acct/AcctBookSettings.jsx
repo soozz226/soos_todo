@@ -1,7 +1,5 @@
-// src/pages/AcctBookSettings.jsx
-// 가계부 추가/삭제 패널 (acct_code 의 code_flag = 'Z') — AcctSettings 의 탭 안에 표시됨
 import { useState, useEffect } from "react";
-import { fetchAcctBookCodes, insertAcctBook, updateAcctType, deleteAcctBook, countAcctEntriesByBook } from "../api/acctApi";
+import { fetchAcctBookCodes, insertAcctBook, updateAcctType, deleteAcctBook, countAcctEntriesByBook } from "../../api/acctApi";
 
 const CODE_KEY = "code_cdid";
 const NAME_KEY = "code_cdnm";

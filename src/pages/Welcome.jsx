@@ -1,5 +1,4 @@
-import Ico from "../etc/icons";
-
+import SvgIcon from "../components/SvgIcon";
 import profileImg from "../assets/profile.png";
 
 function Welcome({ onNavigate, onUser }) {
@@ -17,19 +16,19 @@ function Welcome({ onNavigate, onUser }) {
     </div>
 
     <div className="list-item" onClick={() => onNavigate("cardlist")}>
-        <div className="li-icon blue"><Ico.Board /></div>
+        <div className="li-icon blue"><SvgIcon.Board /></div>
         <div className="li-text"><div className="li-type">Boards</div><div className="li-name">Card List</div></div>
         <span className="chevron">›</span>
     </div>
 
     <div className="list-item" onClick={() => onNavigate("todolist")}>
-        <div className="li-icon green"><Ico.Todo2 /></div>
+        <div className="li-icon green"><SvgIcon.Todo2 /></div>
         <div className="li-text"><div className="li-type">Daily</div><div className="li-name">ToDo List</div></div>
         <span className="chevron">›</span>
     </div>
 
     <div className="list-item" onClick={() => onNavigate("acctbook")}>
-        <div className="li-icon orange"><Ico.AccountBook /></div>
+        <div className="li-icon orange"><SvgIcon.AccountBook /></div>
         <div className="li-text"><div className="li-type">Ledger</div><div className="li-name">Account Book</div></div>
         <span className="chevron">›</span>
     </div>

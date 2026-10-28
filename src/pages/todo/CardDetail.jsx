@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { useFetch } from "../hooks/useFetch";
-import DateEntryModal from "../components/DateEntryModal";
-import RepeatItemModal from "../components/RepeatItemModal";
-import { fetchAcctBookCodes, fetchAcctEntriesByTodo } from "../api/acctApi";
 import { Capacitor } from "@capacitor/core";
+import { useFetch } from "../../hooks/useFetch";
+import { fetchAcctBookCodes, fetchAcctEntriesByTodo } from "../../api/acctApi";
+import DateEntryModal from "../../components/todo/DateEntryModal";
+import RepeatItemModal from "../../components/todo/RepeatItemModal";
+import SvgIcon from "../../components/SvgIcon";
 
 import {
     fetchToDoStatusCodes,
@@ -19,9 +20,9 @@ import {
     deleteTodoFile ,
     copyTodoFile,
     saveTodoAlarm,
-    } from "../api/todoApi";
-    import Ico from "../etc/icons";
-    import AlarmPicker from "../components/AlarmPicker";
+} from "../../api/todoApi";
+
+import AlarmPicker from "../../components/todo/AlarmPicker";
 
 const emptyCard = {
 todo_uuid: null,
@@ -180,7 +181,6 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
     const activeStatusInfo = status?.find((s) => s.code_cdid === localCard.todo_stat);
     const activeTagInfo = tags?.find((t) => t.code_cdid === localCard.todo_tags);
     const activeSubInfo = subs?.find((s) => s.code_cdid === localCard.todo_subs);
-    const StatusIcon = Ico[activeStatusInfo?.code_icon];
 
     const filteredSubs = localCard.todo_tags
         ? subs?.filter((s) => s.code_root === localCard.todo_tags) || []
@@ -589,7 +589,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                         opacity: copying ? 0.5 : 1,
                     }}
                 >
-                    <span style={{ color: "#2f6fd6", display: "flex" }}><Ico.Copy /></span>
+                    <span style={{ color: "#2f6fd6", display: "flex" }}><SvgIcon.Copy /></span>
                     <div>
                         <div style={{ fontSize: 15, fontWeight: 600, color: "#1e2a3a" }}>{copying ? "복사 중..." : "카드 복사"}</div>
                         <div style={{ fontSize: 12, color: "#5b6472", marginTop: 3 }}>내용·체크리스트를 그대로 새 카드로 만들어요</div>
@@ -602,7 +602,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     onClick={() => { closeDropdown(); handleDelete(); }}
                     style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 4px", cursor: "pointer" }}
                 >
-                    <span style={{ color: "#d9463f", display: "flex" }}><Ico.Trash /></span>
+                    <span style={{ color: "#d9463f", display: "flex" }}><SvgIcon.Trash /></span>
                     <div>
                         <div style={{ fontSize: 15, fontWeight: 600, color: "#d9463f" }}>카드 삭제</div>
                         <div style={{ fontSize: 12, color: "#5b6472", marginTop: 3 }}>삭제하면 되돌릴 수 없어요</div>
@@ -667,7 +667,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
 
             {/* Board + Status */}
             <div className="detail-meta-row">
-            <div className="detail-board-info"><Ico.Board /> Card List</div>
+            <div className="detail-board-info"><SvgIcon.Board /> Card List</div>
             <div style={{ position: "relative" }}>
                 <div
                 className="status-badge"
@@ -679,8 +679,8 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     fontWeight: 600,
                 }}
                 >
-                <span className="status-badge-icon">{StatusIcon && <StatusIcon />}</span>
-                <span className="status-badge-label">{activeStatusInfo?.code_cdnm}</span>
+                <span className="status-badge-icon"><SvgIcon icon={activeStatusInfo?.code_icon} /></span>
+                <span>{activeStatusInfo?.code_cdnm} </span>
                 </div>
 
                 {openDropdown === "status" && (
@@ -703,7 +703,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     
                     {status?.map((s) => {
                     const isActive = localCard.todo_stat === s.code_cdid;
-                    const ThisIcon = Ico[s.code_icon];
+
                     return (
                         <span
                         key={s.code_cdid}
@@ -730,9 +730,9 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                             transition: "border 0.15s",
                         }}
                         >
-                        {ThisIcon && (
+                        {s.code_icon && (
                             <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 17, height: 17, flexShrink: 0 }}>
-                                <ThisIcon style={{ width: "100%", height: "100%" }} />
+                                <SvgIcon icon={s.code_icon} />
                             </span>
                         )}
                         {s.code_cdnm}
@@ -774,7 +774,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     }
                     onClick={() => toggleDropdown("tags")}
                     >
-                    <Ico.Tag />
+                    <SvgIcon.Tag />
                     {activeTagInfo ? activeTagInfo.code_cdnm : "Tags"}
                     </div>
 
@@ -834,7 +834,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     }
                     onClick={() => toggleDropdown("subs")}
                     >
-                    <Ico.Tag />
+                    <SvgIcon.Tag />
                     {activeSubInfo?.code_cdnm || "Sub"}
                     </div>
 
@@ -889,7 +889,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     onClick={() => toggleDropdown("alarm")}
                     style={(localCard.todo_alrm?.length ?? 0) > 0 ? { background: "#eef3ff", color: "#4a8ef5", borderColor: "#4a8ef5", cursor: "pointer" } : { cursor: "pointer" }}
                 >
-                    <Ico.Cal />
+                    <SvgIcon.Cal />
                     {(localCard.todo_alrm?.length ?? 0) > 0 ? `Alert · ${localCard.todo_alrm.length}개` : "Alert"}
                 </div>
                 {openDropdown === "alarm" && (
@@ -914,7 +914,7 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                             toggleDropdown("acct");
                         }}
                     >
-                        <Ico.Cal />
+                        <SvgIcon.Cal />
                         {acctLinked.length > 0 ? `Account Book · ${acctLinked.length}건` : "Account Book"}
                     </div>
                     {openDropdown === "acct" && (
@@ -965,8 +965,8 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                     </div>
                     )}
                 </div>
-                <div className="prop-chip"><Ico.Play />Start date</div>
-                <div className="prop-chip"><Ico.Minus />No priority</div>
+                <div className="prop-chip"><SvgIcon.Play />Start date</div>
+                <div className="prop-chip"><SvgIcon.Minus />No priority</div>
                 </div>
                 </div>
             )}

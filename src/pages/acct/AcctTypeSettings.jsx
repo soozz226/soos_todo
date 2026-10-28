@@ -1,9 +1,10 @@
 // src/pages/AcctTypeSettings.jsx
 // 상세 항목(분류) 추가/수정/삭제 패널 — 수입(code_flag B) / 지출(code_flag C) — AcctSettings 의 탭 안에 표시됨
 import { useState, useEffect, lazy, Suspense } from "react";
-import { fetchAcctCodes, fetchAcctBookCodes, insertAcctType, updateAcctType, deleteAcctType, countAcctEntriesByType } from "../api/acctApi";
+import { fetchAcctCodes, fetchAcctBookCodes, insertAcctType, updateAcctType, deleteAcctType, countAcctEntriesByType } from "../../api/acctApi";
+import SvgIcon from "../../components/SvgIcon";
 
-const IconPickerSheet = lazy(() => import("../components/IconPickerSheet"));
+const IconPickerSheet = lazy(() => import("../../components/acct/IconPickerSheet"));
 
 const CODE_KEY = "code_cdid";
 const NAME_KEY = "code_cdnm";
@@ -129,7 +130,7 @@ function AcctTypeSettings({ book }) {
             className={`acct-pm-iconbtn ${icon ? "has" : ""}`}
             onClick={() => setPicker("new")}
         >
-            {icon ? <span dangerouslySetInnerHTML={{ __html: icon }} /> : "＋"}
+            {t.code_icon ? <span dangerouslySetInnerHTML={{ __html: t.code_icon }} /> : "＋"}
         </button>
         <input
             className="acct-pm-input"
@@ -157,7 +158,7 @@ function AcctTypeSettings({ book }) {
                 className={`acct-pm-icbtn ${t.code_icon ? "" : "empty"}`}
                 onClick={() => setPicker(t)}
                 >
-                {t.code_icon ? <span dangerouslySetInnerHTML={{ __html: t.code_icon }} /> : "＋"}
+                {t.code_icon ? <SvgIcon icon={t.code_icon} /> : "＋"}
                 </span>
 
                 {/* 이름 누르면 수정 (공통 항목은 수정 불가) */}
