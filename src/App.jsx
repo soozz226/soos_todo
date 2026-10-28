@@ -1,4 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import Login from './pages/Login'
+import { supabase } from './lib/supabaseClient'
 import styles from "./etc/styles";
 import Welcome from './pages/Welcome'
 import CardList from './pages/CardList'
@@ -17,6 +19,16 @@ import { App as CapApp } from '@capacitor/app'
 import { refreshNotifications } from './utils/notify'
 
 function App() {
+
+  // 로그인 상태 (undefined = 확인 중, null = 로그아웃, 객체 = 로그인됨)
+  const [session, setSession] = useState(undefined);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   const { user } = useUser();
   const { screen, push, replace, back, guardRef } = useNav({ name: 'welcome' });
 
@@ -31,20 +43,32 @@ function App() {
   }, [push]);
 
   // 화면을 옮길 때마다 알림 다시 예약 (카드 저장 후 돌아올 때도 여기서 처리됨)
-  useEffect(() => { refreshNotifications(); }, [screen.name]);
+  useEffect(() => { if (session) refreshNotifications(); }, [screen.name, session]);
 
   // 앱을 다시 열었을 때도 알림 다시 예약
   useEffect(() => {
     let handle;
     CapApp.addListener('appStateChange', ({ isActive }) => {
-      if (isActive) refreshNotifications();
+      if (isActive && session) refreshNotifications();
     }).then((h) => { handle = h; });
     return () => { handle?.remove(); };
-  }, []);
+    }, [session]);
 
   const openCardDetail = (todoUuid = null) =>
     push({ name: 'carddetail', todoUuid });
 
+  if (session === undefined) {
+    return <div style={{ minHeight: "100vh", background: "#f0f2f7" }} />;
+  }
+  if (!session) {
+    return (
+      <>
+        <style>{styles}</style>
+        <Login />
+      </>
+    );
+  }
+  
   return (
     <>
       <style>{styles}</style>
