@@ -29,7 +29,7 @@ function formatDateLabel(str) {
   return `${y}.${String(m).padStart(2, "0")}.${String(d).padStart(2, "0")} (${dow})`;
 }
 
-function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, initialMemo, linkTodo, onBack, onOpenTypeSettings }) {
+function AccountBookDetail({ book, typeCodes, zero, date, entry, initialMemo, linkTodo, onBack }) {
   const isEdit = !!entry;
   const [iofl, setIofl] = useState(entry?.acct_iofl || "A001");
   const [entryDate, setEntryDate] = useState(entry?.acct_date || date || fmtDate(new Date()));
@@ -113,13 +113,6 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
   };
   const handleSave = async () => {
     if (!canSave) return;
-
-    // 이월이 확정된 달보다 이전 달에는 저장 불가
-    const saveDate = entryDate;
-    if (lockedBefore && saveDate.slice(0, 7) < lockedBefore.slice(0, 7)) {
-      window.alert("이월이 확정된 이전 달에는 저장할 수 없어요.\n날짜를 바꾸거나, 이월 확정을 해제해 주세요.");
-      return;
-    }
 
     setSaving(true);
     try {
@@ -261,9 +254,6 @@ function AccountBookDetail({ book, typeCodes, zero, lockedBefore, date, entry, i
         <div className="acct-d-types">
           <div className="acct-d-types-hdr">
             <span className="acct-d-types-ttl">상세 항목</span>
-            {onOpenTypeSettings && (
-              <div className="acct-d-types-set" onClick={onOpenTypeSettings}>설정</div>
-            )}
           </div>
           <div className="acct-d-types-grid">
             {visibleTypes.map((t) => {

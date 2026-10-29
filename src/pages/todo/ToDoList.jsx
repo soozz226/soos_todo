@@ -5,10 +5,10 @@ import { refreshNotifications } from "../../utils/notify";
 import { fmtDate as fmt, fmtDisplay } from "../../utils/dateUtils";
 import { entryBadgeClassName, entryBadgeText } from "../../constants/entryTypes";
 import { QuickNav } from "../../components/FloatingBtn";
+import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import WinCheckModal from "../../components/todo/WinCheckModal";
 import CalendarPicker from "../../components/CalendarPicker";
-import SvgIcon from "../../components/SvgIcon";
 
 function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
   return (
@@ -26,7 +26,7 @@ function Calendar({ selectedDate, onSelect, onClose, dateItemMap }) {
 }
 
 /* ────────────────── Daily ToDo Screen ────────────────── */
-function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings, onQuickNav }) {
+function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onQuickNav }) {
   const { data: cards, loading, reload: sync, } = useFetch(fetchAllChckItems, [], "todo-chck-all");
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -131,17 +131,10 @@ function ToDoList({ onBack, onOpenCard, onNavigateOverdue, onUser, onSettings, o
       )}
 
       {/* Header */}
-      <Header title="ToDo List" user={onUser} onBack={onBack} isSyncing={isSyncing} onSync={handleSync}>
-        <div className="hdr-btn" onClick={() => onSettings && onSettings()} title="환경설정">
-          <SvgIcon.Settings />
-        </div>
-      </Header>
+      <Header title="ToDo List" user={onUser} onBack={onBack} isSyncing={isSyncing} onSync={handleSync} />
 
       {loading ? (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, minHeight: "60vh" }}>
-          <span style={{ width: 32, height: 32, border: "3px solid #eef0f4", borderTopColor: "#4a8ef5", borderRadius: "50%", display: "inline-block", animation: "skeletonSpin 0.7s linear infinite" }} />
-          <span style={{ fontSize: 14, fontWeight: 600, color: "#9ca3af" }}>로딩중...</span>
-        </div>
+        <Loading />
       ) : (
         <>
 

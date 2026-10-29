@@ -16,9 +16,6 @@ import OverdueList from './pages/todo/OverdueList'
 import AccountBook from './pages/acct/AccountBook'
 import AccountBookDetail from './pages/acct/AccountBookDetail'
 import AcctSettings from './pages/acct/AcctSettings'
-import AcctBookSettings from './pages/acct/AcctBookSettings'
-import AcctPhraseSettings from './pages/acct/AcctPhraseSettings'
-
 
 import { CapacitorShareTarget } from '@capgo/capacitor-share-target'
 import { App as CapApp } from '@capacitor/app'
@@ -139,7 +136,6 @@ function App() {
       {screen.name === 'acctsettings' && (
         <AcctSettings
           onBack={back}
-          onNavigate={(name) => push({ name, book: screen.book })}
         />
       )}
     

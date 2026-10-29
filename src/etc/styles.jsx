@@ -63,7 +63,6 @@ body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; }
 .card-main { grid-column: 2; grid-row: 1 / 3; font-size: 15px; font-weight: 500; color: #1e2a3a; line-height: 1.4; min-width: 0; overflow-wrap: break-word; }
 .card-subtype { font-weight: 700; margin-right: 4px; }
 .card-progress { grid-column: 3; grid-row: 1 / 3; display: flex; align-items: center; gap: 4px; font-size: 13px; color: #9ca3af; white-space: nowrap; flex-shrink: 0; }
-.card-ttl { font-size: 15px; font-weight: 500; color: #1e2a3a; margin-bottom: 10px; line-height: 1.4; }
 .card-tag { display: inline-block; font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
 .card-foot { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 .card-meta { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #9ca3af; }
@@ -394,7 +393,6 @@ background: #fef2f2;
 .acct-d-types { margin: 16px 0; background: #fff; border-radius: 16px; padding: 16px 8px 18px; box-shadow: 0 1px 2px rgba(30, 42, 58, .05); }
 .acct-d-types-hdr { display: flex; align-items: center; gap: 10px; padding: 0 8px 14px; }
 .acct-d-types-ttl { font-size: 16px; font-weight: 700; color: #1e2a3a; }
-.acct-d-types-set { padding: 5px 12px; border-radius: 10px; background: #654235; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; }
 .acct-d-types-grid { display: grid; grid-template-columns: repeat(4, 1fr); row-gap: 14px; }
 .acct-d-type { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 4px 2px; cursor: pointer; min-width: 0; }
 .acct-d-type-circle { width: 56px; height: 56px; border-radius: 50%; background: #f5f2ee; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #1e2a3a; box-shadow: inset 0 0 0 2px transparent; transition: background .15s, box-shadow .15s; }

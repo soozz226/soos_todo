@@ -3,6 +3,7 @@ import { useFetch } from "../../hooks/useFetch";
 import { fetchAllChckItems, updateChckItem } from "../../api/todoApi";
 import { fmtDate as fmt } from "../../utils/dateUtils";
 import { entryBadgeClassName, entryBadgeText } from "../../constants/entryTypes";
+import Loading from "../../components/Loading";
 import Header from "../../components/Header";
 import WinCheckModal from "../../components/todo/WinCheckModal";
 
@@ -98,10 +99,7 @@ function OverdueScreen({ onBack, onOpenCard, onUser }) {
       />
 
       {loading ? (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, minHeight: "60vh" }}>
-          <span style={{ width: 32, height: 32, border: "3px solid #eef0f4", borderTopColor: "#4a8ef5", borderRadius: "50%", display: "inline-block", animation: "skeletonSpin 0.7s linear infinite" }} />
-          <span style={{ fontSize: 14, fontWeight: 600, color: "#9ca3af" }}>로딩중...</span>
-        </div>
+        <Loading />
       ) : (
         <div style={{ padding: 16, flex: 1, overflowY: "auto" }}>
           {overdueDates.length === 0 ? (

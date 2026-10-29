@@ -67,8 +67,6 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
         const n = new Date();
         return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
     });
-
-    const acctDateRef = useRef(null);
     
     const [acctLinked, setAcctLinked] = useState([]);
     useEffect(() => {
@@ -99,8 +97,6 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
 
     const [isDirty, setIsDirty] = useState(false);
     const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
-
-    const [copying, setCopying] = useState(false);
 
     const isDirtyRef = useRef(false);
     useEffect(() => { isDirtyRef.current = isDirty; }, [isDirty]);
@@ -576,17 +572,16 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                 </div>
 
                 <div
-                    onClick={() => { if (!copying) { closeDropdown(); handleCopyCard(); } }}
+                    onClick={() => { closeDropdown(); handleCopyCard(); }}
                     style={{
                         display: "flex", alignItems: "center", gap: 14,
                         marginTop: 18, padding: "14px 4px",
-                        cursor: copying ? "not-allowed" : "pointer",
-                        opacity: copying ? 0.5 : 1,
+                        cursor: "pointer",
                     }}
                 >
                     <span style={{ color: "#2f6fd6", display: "flex" }}><SvgIcon.Copy /></span>
                     <div>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: "#1e2a3a" }}>{copying ? "복사 중..." : "카드 복사"}</div>
+                        <div style={{ fontSize: 15, fontWeight: 600, color: "#1e2a3a" }}>카드 복사</div>
                         <div style={{ fontSize: 12, color: "#5b6472", marginTop: 3 }}>내용·체크리스트를 그대로 새 카드로 만들어요</div>
                     </div>
                 </div>
