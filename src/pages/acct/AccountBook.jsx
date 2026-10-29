@@ -1,7 +1,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useFetch } from "../../hooks/useFetch";
-import { fetchAcctEntries, fetchAcctEntriesRange, fetchAcctBookCodes, fetchAcctCodes, moveAcctEntries,
+import { fetchAcctEntriesRange, fetchAcctBookCodes, fetchAcctCodes, moveAcctEntries,
   insertAcctEntry, updateAcctEntry, deleteAcctEntry, fetchAcctCarryBase } from "../../api/acctApi";
 import { fmtDate, buildWeeks } from "../../utils/dateUtils";
 import { WEEK_LABELS } from "../../constants/entryTypes";

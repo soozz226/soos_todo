@@ -142,12 +142,7 @@ function App() {
           onNavigate={(name) => push({ name, book: screen.book })}
         />
       )}
-      
-      {screen.name === 'acctsettingbooks' && <AcctBookSettings onBack={back} />}
-      
-      {screen.name === 'acctsettingphrases' && (
-        <AcctPhraseSettings book={screen.book} onBack={back} />
-      )}
+    
     </>
   )
 }

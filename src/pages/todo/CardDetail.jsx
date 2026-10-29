@@ -500,11 +500,6 @@ function CardDetail({ todoUuid, onBack, guardRef, sharedFiles, onOpenAcct }) {
                 item_uuid: crypto.randomUUID(),
             })),
         }));
-    
-        const copiedAlarms = (localCard.todo_alrm || []).map((a) => ({
-            ...a,
-            alrm_uuid: crypto.randomUUID(),
-        }));
 
         setLocalCard((prev) => ({
             ...prev,

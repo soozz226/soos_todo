@@ -48,13 +48,6 @@ body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; }
 .filter-btn.active { border-color: #4a8ef5; color: #1e5aa8; }
 .filter-chevron { font-size: 10px; line-height: 1; color: #9ca3af; transition: transform .15s; }
 .filter-btn.open .filter-chevron { transform: rotate(180deg); }
-.filter-menu { position: absolute; top: calc(100% + 5px); right: 0; min-width: 96px; background: #fff; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.06); overflow: hidden; z-index: 30; }
-.filter-menu-item { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 10px; font-size: 12px; color: #1e2a3a; cursor: pointer; white-space: nowrap; transition: background .1s; }
-.filter-menu-item:hover { background: #f5f6fa; }
-.filter-menu-item.sel { background: #eef4fc; color: #1e5aa8; font-weight: 600; }
-.filter-menu-item svg { width: 13px; height: 13px; color: #1e5aa8; flex-shrink: 0; }
-.filter-menu-label { display: flex; align-items: center; }
-.filter-menu-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 8px; }
 .filter-backdrop { position: fixed; inset: 0; z-index: 15; }
 .column { padding: 16px; flex: 1; overflow-y: auto; }
 .col-hdr { display: flex; align-items: center; gap: 8px; background: #e8ebf2; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; align-items:center; position: relative; z-index: 20; }
@@ -442,7 +435,6 @@ background: #fef2f2;
 .acct-cal-dot.done { background: #22c55e; }
 .acct-cal-day.selected .acct-cal-dot { background: #fff; }
 .acct-cal-day.out .acct-cal-dot { opacity: .4; }
-.acct-cal-foot { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px 0; }
 .acct-cal-today-btn { font-size: 14px; font-weight: 600; color: #4a8ef5; padding: 8px; cursor: pointer; }
 .acct-cal-close-btn { font-size: 14px; font-weight: 600; color: #9ca3af; padding: 8px; cursor: pointer; }
 

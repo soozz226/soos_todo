@@ -1,4 +1,4 @@
-// src/components/CheckListItemRepeatPicker.jsx
+
 import { useState, useMemo } from "react";
 import { fmtDate, parseDate, expandRepeat } from "../../utils/dateUtils";
 import { ENTRY_TYPE_OPTIONS, entryTypeOptionClassName } from "../../constants/entryTypes";
@@ -9,7 +9,7 @@ const [repeatName, setRepeatName] = useState("");
 const [startDate, setStartDate] = useState(fmtDate(new Date()));
 const [endDate, setEndDate] = useState("");
 const [repeatType, setRepeatType] = useState("day");
-const [interval, setInterval] = useState(1);
+const [interval, setIntervalN] = useState(1);
 const [weekDays, setWeekDays] = useState([]);
 const [entryType, setEntryType] = useState(null);
 
@@ -73,8 +73,8 @@ return (
             interval={interval}
             weekDays={weekDays}
             startDate={startDate}
-            onType={(id) => { setRepeatType(id); setInterval(1); setWeekDays([]); }}
-            onInterval={setInterval}
+            onType={(id) => { setRepeatType(id); setIntervalN(1); setWeekDays([]); }}
+            onInterval={setIntervalN}
             onToggleDay={toggleWeekDay}
         />
 

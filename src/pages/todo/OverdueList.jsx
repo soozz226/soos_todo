@@ -68,7 +68,6 @@ function OverdueScreen({ onBack, onOpenCard, onUser }) {
 
   return (
     <div style={{ maxWidth: "var(--app-max-w, 100%)", margin: "0 auto", minHeight: "100vh", background: "#f0f2f7", display: "flex", flexDirection: "column", fontFamily: "inherit" }}>
-      {/* skeletonSpin keyframe은 전역 CSS로 이동 (global-additions.css 참고) */}
 
       {winCheckTarget && (
         <WinCheckModal

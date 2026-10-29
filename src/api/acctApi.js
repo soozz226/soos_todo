@@ -1,23 +1,5 @@
 import { supabase } from "../lib/supabaseClient";
 
-// 가계부 항목 조회 (월 범위)
-export async function fetchAcctEntries(year, month, book) {
-    const start = `${year}-${String(month + 1).padStart(2, "0")}-01`;
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    const end = `${year}-${String(month + 1).padStart(2, "0")}-${lastDay}`;
-
-    let query = supabase
-        .from("soos_acct")
-        .select("*")
-        .gte("acct_date", start)
-        .lte("acct_date", end);
-    if (book) query = query.eq("acct_book", book);
-
-    const { data, error } = await query.order("acct_date", { ascending: true });
-    if (error) throw error;
-    return data;
-}
-
 // 달력 그리드용: 시작일~종료일 범위 조회 (이전/다음 달 칸 포함)
 export async function fetchAcctEntriesRange(start, end, book) {
     let query = supabase
